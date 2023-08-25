@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "475003588315",
+    "project_id": "lovers-ai-to-kanjo",
+    "storage_bucket": "lovers-ai-to-kanjo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:475003588315:android:b4679d50cf8ecce7e046fe",
+        "android_client_info": {
+          "package_name": "com.example.lovers_ai_to_kanjo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "475003588315-85ttr5f92gmj552nf9ticreb2d1087e3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDkgHI9A1qfJcqQjfx0dov1GKaQOyc8Ibo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "475003588315-85ttr5f92gmj552nf9ticreb2d1087e3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
