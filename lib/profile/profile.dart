@@ -1,14 +1,10 @@
 import 'dart:io';
-
-import 'package:arbor/AdsWidget/AdsWidget.dart';
-import 'package:arbor/adsForTest/interAdTeste.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
@@ -476,14 +472,6 @@ class _profileSettingsState extends State<profileSettings> {
                       child: const Text('Salvar'),
                     ),
                 ),
-                ElevatedButton(onPressed: (){
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context){
-                        return MyApp();
-                      }));
-                }, child: Text(
-                  'Inter ad teste'
-                ))
               ],
             ),
           ),

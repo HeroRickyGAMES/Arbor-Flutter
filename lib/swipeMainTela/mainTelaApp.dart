@@ -7,14 +7,16 @@ import 'package:arbor/profile/profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swipeable_card_stack/swipeable_card_stack.dart';
 import 'package:uuid/uuid.dart';
-import 'package:intl/intl.dart';
 
+final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 var UID = FirebaseAuth.instance.currentUser?.uid;
 SwipeableCardSectionController _cardController = SwipeableCardSectionController();
 String localData = '';
@@ -26,6 +28,8 @@ String sex = '';
 String opositeSex = '';
 bool isSameSexAndOposite = false;
 bool isPremium = false;
+bool _notificationsEnabled = false;
+
 class MainTelaRoleta extends StatefulWidget {
   const MainTelaRoleta({super.key});
 
@@ -37,7 +41,6 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
   var _currentIndex = 0;
 
   primeiroCheck() async {
-
     userInfos = await FirebaseFirestore.instance
         .collection("Usuarios")
         .doc(UID)
@@ -63,6 +66,39 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
     FirebaseFirestore.instance.collection('Usuarios').doc(UID).update({
       'LocalizaçãoDefault': localData,
     });
+
+    final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
+
+    final SharedPreferences prefs = await _prefs;
+
+    String? negado = prefs.getString('Foi Negado');
+
+    if(negado == 'false'){
+      //não garantido
+    }else{
+      final bool granted = await flutterLocalNotificationsPlugin
+          .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin>()
+          ?.areNotificationsEnabled() ??
+          false;
+
+      if(granted == false){
+        final AndroidFlutterLocalNotificationsPlugin? androidImplementation =
+        flutterLocalNotificationsPlugin.resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin>();
+
+        final bool? granted = await androidImplementation?.requestPermission();
+        _notificationsEnabled = granted ?? false;
+
+        prefs.setString('Foi Negado', '$granted');
+        //não garantido
+      }else{
+        _notificationsEnabled = granted;
+        //garantido
+      }
+    }
+
   }
 
   @override

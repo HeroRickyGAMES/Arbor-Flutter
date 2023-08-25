@@ -1,4 +1,4 @@
-# arbor
+# Arbor
 
 Um Aplicativo de relacionamento em Flutter
 
@@ -15,6 +15,6 @@ Aqui a baixo está algumas funções do app:
 <h3>✅ Mudança de IdadeRANGE (Procura entre idades)</h3>
 <h3>✅ Lista de Chats</h3>
 <h3>✅ Chat por localização</h3>
-<h3>❌ Permissão de notificação</h3>
+<h3>✅ Permissão de notificação</h3>
 <h3>❌ Notificações dos Chats</h3>
 <h3>❌ Notificações dos Matchs</h3>
