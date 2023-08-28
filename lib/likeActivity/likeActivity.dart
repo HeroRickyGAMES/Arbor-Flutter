@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:uuid/uuid.dart';
 
+//Programado por HeroRickyGames
+
 class likeActivity extends StatefulWidget {
   bool isPremium = false;
   likeActivity(this.isPremium, {super.key});

@@ -12,10 +12,13 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:salomon_bottom_bar/salomon_bottom_bar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:swipeable_card_stack/swipeable_card_stack.dart';
 import 'package:uuid/uuid.dart';
+
+//Programado por HeroRickyGames
 
 final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 var UID = FirebaseAuth.instance.currentUser?.uid;
@@ -50,7 +53,12 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
     setState(() {
       //Sistema de assinaturas
       if(userInfos['AssinaturaTime'] == ""){
-        isPremium = false;
+        if(userInfos['Debug'] == true){
+          isPremium = true;
+        }else{
+          isPremium = false;
+          interAd(isPremium);
+        }
         interAd(isPremium);
       }else{
         int totaymenostrinta = int.parse('${DateTime.now().month}${DateTime.now().day}${DateTime.now().year}') - 01000000;
@@ -58,8 +66,12 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
         if(totaymenostrinta ==  int.parse("${userInfos['AssinaturaTime'].replaceAll('/', '')}")){
           isPremium = true;
         }else{
-          isPremium = false;
-          interAd(isPremium);
+          if(userInfos['Debug'] == true){
+            isPremium = true;
+          }else{
+            isPremium = false;
+            interAd(isPremium);
+          }
         }
       }
       startad = true;
@@ -109,6 +121,79 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
     }
 
     return LayoutBuilder(builder: (context, constrains){
+      void interAdReward(bool isPremiumn) async {
+        if(isPremiumn == false){
+          MobileAds.instance.initialize();
+          InterstitialAd? _interstitialAd;
+          int _numInterstitialLoadAttempts = 0;
+          final AdRequest request = const AdRequest(
+            keywords: <String>['foo', 'bar'],
+            contentUrl: 'http://foo.com/bar.html',
+            nonPersonalizedAds: true,
+          );
+
+          void _createInterstitialAd() {
+            InterstitialAd.load(
+                adUnitId: "ca-app-pub-1895475762491539/8805033305",
+                request: request,
+                adLoadCallback: InterstitialAdLoadCallback(
+                  onAdLoaded: (InterstitialAd ad) {
+                    _interstitialAd = ad;
+                    _numInterstitialLoadAttempts = 0;
+                    _interstitialAd!.setImmersiveMode(true);
+                  },
+                  onAdFailedToLoad: (LoadAdError error) {
+                    _numInterstitialLoadAttempts += 1;
+                    _interstitialAd = null;
+                    if (_numInterstitialLoadAttempts < maxFailedLoadAttempts) {
+                      _createInterstitialAd();
+                    }
+                  },
+                ));
+          }
+
+          void _showInterstitialAd() {
+            if (_interstitialAd == null) {
+              return;
+            }
+            _interstitialAd!.fullScreenContentCallback = FullScreenContentCallback(
+              onAdShowedFullScreenContent: (InterstitialAd ad) =>
+                  print('ad onAdShowedFullScreenContent.'),
+              onAdDismissedFullScreenContent: (InterstitialAd ad) {
+                ad.dispose();
+                _createInterstitialAd();
+                setState(() {
+                  isPremium = true;
+                });
+                Fluttertoast.showToast(
+                    msg: "Parabéns! Aproveite os recursos premium por esssa unica sessão!",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.CENTER,
+                    timeInSecForIosWeb: 1,
+                    backgroundColor: Colors.red,
+                    textColor: Colors.white,
+                    fontSize: 16.0
+                );
+              },
+              onAdFailedToShowFullScreenContent: (InterstitialAd ad, AdError error) {
+                ad.dispose();
+                _createInterstitialAd();
+              },
+            );
+            _interstitialAd!.show();
+            _interstitialAd = null;
+          }
+          _createInterstitialAd();
+          showinterad() async {
+            await Future.delayed(const Duration(seconds: 5));
+            _showInterstitialAd();
+          }
+          showinterad();
+        }else{
+
+        }
+      }
+
       return Scaffold(
         appBar: AppBar(
           title: const Text('Arbor - Encontre alguém especial!'),
@@ -122,33 +207,118 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
               _currentIndex == 0
                   ? SizedBox(
                   width: double.infinity,
-                  height: constrains.maxHeight - 265,
+                  height: constrains.maxHeight - 275,
                   child: const SwapWidgets()
               )
                   :
               _currentIndex == 1 ?
               SizedBox(
                   width: double.infinity,
-                  height: constrains.maxHeight - 265,
+                  height: constrains.maxHeight - 275,
                   child: likeActivity(isPremium)
               )
                   :
               _currentIndex == 2?
               SizedBox(
                   width: double.infinity,
-                  height: constrains.maxHeight - 265,
+                  height: constrains.maxHeight - 275,
                   child: const ChatList()
               )
                   :
               SizedBox(
                   width: double.infinity,
-                  height: constrains.maxHeight - 265,
+                  height: constrains.maxHeight - 275,
                   child: profileSettings(isPremium)
               ),
-              isPremium == false ? ElevatedButton(onPressed: (){
-                sejaPremium(context);
-              },
-                  child: const Text('Se torne premium')
+              isPremium == false ? Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(5),
+                    child: ElevatedButton(onPressed: (){
+                      sejaPremium(context);
+                    },
+                        child: const Text('Se torne premium')
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(5),
+                    child: ElevatedButton(onPressed: (){
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: const Center(
+                                child: Text(
+                                  'Seja Premium temporario!',
+                                  style: TextStyle(
+                                      fontSize: 24,
+                                      fontWeight: FontWeight.bold
+                                  ),
+                                )
+                            ),
+                            actions: [
+                              Container(
+                                padding: const EdgeInsets.all(16),
+                                child: Center(
+                                  child: Column(
+                                    children: [
+                                      const Text(
+                                          'Com o premium temporario você tem todos os recursos premium em uma unica sessão sem pagar nada!',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold
+                                        ),
+                                      ),
+                                      const Text(
+                                        'Curtir e conversar pessoas que já te curtiram sem restrições',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold
+                                        ),
+                                      ),
+                                      const Text('Conheça pessoas do mundo todo!',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold
+                                        ),
+                                      ),
+                                      const Text('Mais opções!',
+                                        textAlign: TextAlign.center,
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold
+                                        ),
+                                      ),
+                                      TextButton(onPressed: () async {
+                                        Navigator.of(context).pop();
+                                        interAdReward(isPremium);
+
+                                      }, child: const Text(
+                                          'Seja premium temporario!',
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.bold
+                                        ),
+                                      )
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
+                          );
+                        },
+                      );
+                    },
+                        child: const Text('Obtenha o premium temporario')
+                    ),
+                  ),
+                ],
               ): Container(),
               AdBannerLayout(isPremium),
             ],

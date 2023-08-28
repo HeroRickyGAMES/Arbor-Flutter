@@ -287,15 +287,6 @@ class _profileSettingsState extends State<profileSettings> {
                         'Premium'
                     )
                 ),
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  child: ElevatedButton(
-                    onPressed: (){
-
-                    },
-                    child: const Text('Seja premium'),
-                  ),
-                ),
                 CheckboxListTile(
                   title: Row(
                     children: [

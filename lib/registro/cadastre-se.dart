@@ -12,6 +12,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 
+//Programado por HeroRickyGames
+
 class Cadastrese extends StatefulWidget {
   const Cadastrese({super.key});
 

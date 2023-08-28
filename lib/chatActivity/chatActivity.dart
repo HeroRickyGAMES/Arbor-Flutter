@@ -6,6 +6,8 @@ import 'package:flutter_chat_bubble/chat_bubble.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:uuid/uuid.dart';
 
+//Programado por HeroRickyGames
+
 class chatActivity extends StatefulWidget {
   String id = '';
   String NomeChat2 = '';
@@ -22,7 +24,8 @@ class _chatActivityState extends State<chatActivity> {
   String textoMensagem = '';
   final msgController = TextEditingController();
   String NomeUser = '';
-
+  ScrollController scrollController = ScrollController();
+  bool started = false;
   @override
   Widget build(BuildContext context) {
 
@@ -36,7 +39,18 @@ class _chatActivityState extends State<chatActivity> {
       });
     }
 
+    rolateToEnd() async {
+      await Future.delayed(const Duration(seconds: 1));
+      scrollController.animateTo(scrollController.position.maxScrollExtent, duration: const Duration(microseconds: 1), curve: Curves.easeOut);
+    }
+
+    if(started == false){
+      rolateToEnd();
+    }
+
     mtUser();
+
+    started = true;
 
     return LayoutBuilder(
       builder: (context, constrains){
@@ -74,111 +88,113 @@ class _chatActivityState extends State<chatActivity> {
                           );
                         }
                         return Container(
-                          child: Container(
-                            padding: const EdgeInsets.all(16),
-                            child: ListView(
-                              children: snapshot.data!.docs.map((documents){
-                                return Container(
-                                  child: Column(
-                                    children: [
-                                      InkWell(
-                                        onLongPress: (){
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                actions: [
-                                                  Center(
-                                                    child: Container(
-                                                      padding: const EdgeInsets.all(16),
-                                                      child: TextButton(onPressed: (){
+                          padding: const EdgeInsets.all(16),
+                          child: ListView(
+                            controller: scrollController,
+                            children: snapshot.data!.docs.map((documents){
+                              if (!snapshot.hasData) {
+                                return const Center(
+                                  child: CircularProgressIndicator(),
+                                );
+                              }
+                              return Column(
+                                children: [
+                                  InkWell(
+                                    onLongPress: (){
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            actions: [
+                                              Center(
+                                                child: Container(
+                                                  padding: const EdgeInsets.all(16),
+                                                  child: TextButton(onPressed: (){
 
-                                                        ClipboardData data = ClipboardData(text: documents['Mensagem']);
+                                                    ClipboardData data = ClipboardData(text: documents['Mensagem']);
 
-                                                        Clipboard.setData(data);
+                                                    Clipboard.setData(data);
 
-                                                        Fluttertoast.showToast(
-                                                            msg: "Copiado!",
-                                                            toastLength: Toast.LENGTH_SHORT,
-                                                            gravity: ToastGravity.CENTER,
-                                                            timeInSecForIosWeb: 1,
-                                                            backgroundColor: Colors.red,
-                                                            textColor: Colors.white,
-                                                            fontSize: 16.0
-                                                        );
+                                                    Fluttertoast.showToast(
+                                                        msg: "Copiado!",
+                                                        toastLength: Toast.LENGTH_SHORT,
+                                                        gravity: ToastGravity.CENTER,
+                                                        timeInSecForIosWeb: 1,
+                                                        backgroundColor: Colors.red,
+                                                        textColor: Colors.white,
+                                                        fontSize: 16.0
+                                                    );
 
-                                                        Navigator.pop(context);
+                                                    Navigator.pop(context);
 
-                                                      },
-                                                          child: const Text(
-                                                              'Copiar',
-                                                            style: TextStyle(
-                                                                color: Colors.blue
-                                                            ),
-                                                          )
-                                                      ),
-                                                    ),
+                                                  },
+                                                      child: const Text(
+                                                        'Copiar',
+                                                        style: TextStyle(
+                                                            color: Colors.blue
+                                                        ),
+                                                      )
                                                   ),
-                                                  documents['Nome'] == NomeUser? Center(
-                                                    child: Container(
-                                                      padding: const EdgeInsets.all(16),
-                                                      child: TextButton(onPressed: (){
-                                                        FirebaseFirestore.instance.collection('ChatCollection').doc(widget.id).collection('Mensagens').doc(documents['id']).update({
-                                                          'Mensagem': 'Essa Menssagem foi excluida!'
-                                                        }).whenComplete((){
-                                                          Navigator.of(context).pop();
-                                                        });
-                                                      },
-                                                          child: const Text(
-                                                              'Deletar',
-                                                            style: TextStyle(
-                                                              color: Colors.red
-                                                            ),
-                                                          )
-                                                      ),
-                                                    ),
-                                                  ): Container(),
-                                                ],
-                                              );
-                                            },
+                                                ),
+                                              ),
+                                              documents['Nome'] == NomeUser? Center(
+                                                child: Container(
+                                                  padding: const EdgeInsets.all(16),
+                                                  child: TextButton(onPressed: (){
+                                                    FirebaseFirestore.instance.collection('ChatCollection').doc(widget.id).collection('Mensagens').doc(documents['id']).update({
+                                                      'Mensagem': 'Essa Menssagem foi excluida!'
+                                                    }).whenComplete((){
+                                                      Navigator.of(context).pop();
+                                                    });
+                                                  },
+                                                      child: const Text(
+                                                        'Deletar',
+                                                        style: TextStyle(
+                                                            color: Colors.red
+                                                        ),
+                                                      )
+                                                  ),
+                                                ),
+                                              ): Container(),
+                                            ],
                                           );
                                         },
-                                        child: ChatBubble(
-                                          clipper: ChatBubbleClipper1(type: documents['Nome'] == NomeUser?  BubbleType.sendBubble : BubbleType.receiverBubble),
-                                          alignment: documents['Nome'] == NomeUser? Alignment.centerRight: Alignment.centerLeft,
-                                          margin: const EdgeInsets.only(top: 20),
-                                          backGroundColor: Colors.blue,
-                                          child: Container(
-                                            constraints: BoxConstraints(
-                                              maxWidth: MediaQuery.of(context).size.width * 0.7,
+                                      );
+                                    },
+                                    child: ChatBubble(
+                                      clipper: ChatBubbleClipper1(type: documents['Nome'] == NomeUser?  BubbleType.sendBubble : BubbleType.receiverBubble),
+                                      alignment: documents['Nome'] == NomeUser? Alignment.centerRight: Alignment.centerLeft,
+                                      margin: const EdgeInsets.only(top: 20),
+                                      backGroundColor: Colors.blue,
+                                      child: Container(
+                                        constraints: BoxConstraints(
+                                          maxWidth: MediaQuery.of(context).size.width * 0.7,
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Text(
+                                              documents['Nome'],
+                                              style: const TextStyle(
+                                                  fontSize: 11
+                                              ),
                                             ),
-                                            child: Column(
-                                              children: [
-                                                Text(
-                                                  documents['Nome'],
-                                                  style: const TextStyle(
-                                                      fontSize: 11
-                                                  ),
-                                                ),
-                                                Text(
-                                                    documents['Mensagem']
-                                                ),
-                                                Text(
-                                                  "${documents['Data']} ${documents['Hora']}",
-                                                  style: const TextStyle(
-                                                      fontSize: 11
-                                                  ),
-                                                ),
-                                              ],
+                                            Text(
+                                                documents['Mensagem']
                                             ),
-                                          ),
+                                            Text(
+                                              "${documents['Data']} ${documents['Hora']}",
+                                              style: const TextStyle(
+                                                  fontSize: 11
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ),
-                                    ],
+                                    ),
                                   ),
-                                );
-                              }).toList(),
-                            ),
+                                ],
+                              );
+                            }).toList(),
                           ),
                         );
                       }
@@ -233,7 +249,6 @@ class _chatActivityState extends State<chatActivity> {
                                   'Hora': '${DateTime.now().hour}:${DateTime.now().minute}',
                                   'Mensagem' : textoMensagem,
                                 }).whenComplete((){
-
                                   FirebaseFirestore.instance.collection('DocChatIDs').doc(widget.DocChatIDs).update({
                                     "LastMensage": '${resulte['Nome']}: $textoMensagem',
                                     'Data': '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year} ',
@@ -243,6 +258,7 @@ class _chatActivityState extends State<chatActivity> {
                                     textoMensagem = '';
                                     msgController.clear();
                                   });
+                                  scrollController.animateTo(scrollController.position.maxScrollExtent, duration: const Duration(microseconds: 500), curve: Curves.easeOut);
                                 });
                               }
                             },

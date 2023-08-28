@@ -1,5 +1,7 @@
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
+//Programado por HeroRickyGames
+
 class NotificationApi{
   static final _notifications = FlutterLocalNotificationsPlugin();
   static Future _notificationsDetails() async{

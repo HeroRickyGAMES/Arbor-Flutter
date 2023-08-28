@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+//Programado por HeroRickyGames
+
 class CardView extends StatelessWidget {
   const CardView({
     Key? key,
