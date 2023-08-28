@@ -18,3 +18,8 @@ Aqui a baixo está algumas funções do app:
 <h3>✅ Permissão de notificação</h3>
 <h3>❌ Notificações dos Chats</h3>
 <h3>❌ Notificações dos Matchs</h3>
+
+ADS:
+
+<h3>✅ BannerAd</h3>
+<h3>✅ InterAd</h3>

@@ -98,7 +98,6 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
         //garantido
       }
     }
-
   }
 
   @override
@@ -135,7 +134,7 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
               _currentIndex == 2?
               SizedBox(
                   width: double.infinity,
-                  height: constrains.maxHeight - 250,
+                  height: constrains.maxHeight - 265,
                   child: const ChatList()
               )
                   :
