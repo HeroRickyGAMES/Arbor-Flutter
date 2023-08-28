@@ -140,7 +140,7 @@ class _profileSettingsState extends State<profileSettings> {
               },
                 child: Image.file(
                     convertedFilee!,
-                  scale: 2,
+                  scale: 4,
                 )
             ),
           ),

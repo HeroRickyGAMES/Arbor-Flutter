@@ -1,3 +1,4 @@
+import 'package:arbor/AdsWidget/AdsWidget.dart';
 import 'package:arbor/registro/cadastre-se.dart';
 import 'package:arbor/swipeMainTela/mainTelaApp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -72,6 +73,13 @@ class _LoginScreenState extends State<LoginScreen> {
             children: [
               Container(
                 padding: const EdgeInsets.all(16),
+                  child: Image.asset(
+                      'assets/images/ic_launcher.png',
+                    scale: 4,
+                  )
+              ),
+              Container(
+                padding: const EdgeInsets.all(16),
                 child: TextFormField(
                   keyboardType: TextInputType.emailAddress,
                   onChanged: (valor){
@@ -89,6 +97,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.all(16),
                 child: TextFormField(
                   keyboardType: TextInputType.visiblePassword,
+                  obscureText: true,
                   onChanged: (valor){
                     Senha = valor;
                     //Mudou mandou para a String
@@ -158,6 +167,10 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     ],
                   )
+              ),
+              Container(
+                  padding: const EdgeInsets.all(16),
+                  child: AdBannerLayout(false),
               ),
             ],
           ),

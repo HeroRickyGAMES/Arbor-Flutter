@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:arbor/AdsWidget/AdsWidget.dart';
 import 'package:arbor/swipeMainTela/mainTelaApp.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -112,6 +113,7 @@ class _CadastreseState extends State<Cadastrese> {
                 padding: const EdgeInsets.all(16),
                 child: TextFormField(
                   keyboardType: TextInputType.visiblePassword,
+                  obscureText: true,
                   onChanged: (valor){
                     Senha = valor;
                     //Mudou mandou para a String
@@ -410,6 +412,10 @@ class _CadastreseState extends State<Cadastrese> {
                     },
                     child: const Text('Criar conta'),
                   )
+              ),
+              Container(
+                padding: const EdgeInsets.all(16),
+                child: AdBannerLayout(false),
               ),
             ],
           ),

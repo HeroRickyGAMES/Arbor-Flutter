@@ -59,7 +59,6 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
           isPremium = false;
           interAd(isPremium);
         }
-        interAd(isPremium);
       }else{
         int totaymenostrinta = int.parse('${DateTime.now().month}${DateTime.now().day}${DateTime.now().year}') - 01000000;
 
