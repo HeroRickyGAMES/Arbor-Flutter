@@ -11,6 +11,7 @@ class NotificationApi{
         importance: Importance.max,
         icon: '@mipmap/ic_launcher',
         playSound: true,
+        sound: RawResourceAndroidNotificationSound('dearly'),
       ),
     );
   }

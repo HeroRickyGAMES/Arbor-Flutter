@@ -1,4 +1,5 @@
 import 'package:arbor/AdsWidget/AdsWidget.dart';
+import 'package:arbor/NotificationAPI/NotificationIntermediater.dart';
 import 'package:arbor/bePremiumAlert/sejaPremium.dart';
 import 'package:arbor/chatActivity/chatActivity.dart';
 import 'package:arbor/chatActivity/chatList.dart';
@@ -41,6 +42,7 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
   var _currentIndex = 0;
 
   primeiroCheck() async {
+    intermeterNotifications();
     userInfos = await FirebaseFirestore.instance
         .collection("Usuarios")
         .doc(UID)

@@ -16,8 +16,8 @@ Aqui a baixo está algumas funções do app:
 <h3>✅ Lista de Chats</h3>
 <h3>✅ Chat por localização</h3>
 <h3>✅ Permissão de notificação</h3>
-<h3>❌ Notificações dos Chats</h3>
-<h3>❌ Notificações dos Matchs</h3>
+<h3>✅ Notificações dos Chats</h3>
+<h3>✅ Notificações dos Matchs</h3>
 
 ADS:
 
