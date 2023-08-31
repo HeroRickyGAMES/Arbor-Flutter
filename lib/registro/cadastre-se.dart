@@ -393,9 +393,8 @@ class _CadastreseState extends State<Cadastrese> {
                                         'Detalhes': '',
                                         'exibirApenasEmMinhaLocalização': true
                                       });
-                                    }).then((value){
+                                    }).whenComplete(() {
                                       Navigator.of(context).pop();
-
                                       Navigator.pop(context);
                                       Navigator.push(context,
                                           MaterialPageRoute(builder: (context){

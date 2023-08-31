@@ -34,6 +34,10 @@ bool isSameSexAndOposite = false;
 bool isPremium = false;
 bool _notificationsEnabled = false;
 
+main(){
+  WidgetsFlutterBinding.ensureInitialized();
+}
+
 class MainTelaRoleta extends StatefulWidget {
   const MainTelaRoleta({super.key});
 
@@ -74,10 +78,6 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
         }
       }
       startad = true;
-    });
-
-    FirebaseFirestore.instance.collection('Usuarios').doc(UID).update({
-      'LocalizaçãoDefault': localData,
     });
 
     final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
@@ -162,7 +162,16 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
                 ad.dispose();
                 _createInterstitialAd();
                 setState(() {
+
                   isPremium = true;
+
+                  setState(() {
+                    const SwapWidgets();
+                    likeActivity(isPremium);
+                    const ChatList();
+                    profileSettings(isPremium);
+                  });
+
                 });
                 Fluttertoast.showToast(
                     msg: "Parabéns! Aproveite os recursos premium por esssa unica sessão!",
@@ -203,11 +212,11 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              _currentIndex == 0
-                  ? SizedBox(
+              _currentIndex == 0 ?
+              SizedBox(
                   width: double.infinity,
                   height: constrains.maxHeight - 275,
-                  child: const SwapWidgets()
+                  child: const SwapWidgets(),
               )
                   :
               _currentIndex == 1 ?
@@ -296,7 +305,15 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
                                       TextButton(onPressed: () async {
                                         Navigator.of(context).pop();
                                         interAdReward(isPremium);
-
+                                        Fluttertoast.showToast(
+                                            msg: "Aguarde um momento enquanto carregamos o anuncio...",
+                                            toastLength: Toast.LENGTH_SHORT,
+                                            gravity: ToastGravity.CENTER,
+                                            timeInSecForIosWeb: 1,
+                                            backgroundColor: Colors.red,
+                                            textColor: Colors.white,
+                                            fontSize: 16.0
+                                        );
                                       }, child: const Text(
                                           'Seja premium temporario!',
                                         style: TextStyle(
@@ -325,7 +342,9 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
         ),
         bottomNavigationBar: SalomonBottomBar(
           currentIndex: _currentIndex,
-          onTap: (i) => setState(() => _currentIndex = i),
+          onTap: (i) {
+            setState(() => _currentIndex = i);
+          },
           items: [
             /// Home
             SalomonBottomBarItem(
@@ -371,7 +390,7 @@ class SwapWidgets extends StatefulWidget {
 
 class _SwapWidgetsState extends State<SwapWidgets> {
   swapedToMakeAlgo() async {
-
+    WidgetsFlutterBinding.ensureInitialized();
     userInfos = await FirebaseFirestore.instance
         .collection("Usuarios")
         .doc(UID)
@@ -387,9 +406,34 @@ class _SwapWidgetsState extends State<SwapWidgets> {
     );
 
     Placemark placemark = placemarks.first;
-
+    WidgetsFlutterBinding.ensureInitialized();
     setState(() {
-      onlyMyLocate = userInfos['exibirApenasEmMinhaLocalização'];
+      if(userInfos['AssinaturaTime'] == ""){
+        if(userInfos['Debug'] == true){
+          onlyMyLocate = userInfos['exibirApenasEmMinhaLocalização'];
+        }else{
+          onlyMyLocate = true;
+        }
+      }else {
+        int totaymenostrinta = int.parse('${DateTime
+            .now()
+            .month}${DateTime
+            .now()
+            .day}${DateTime
+            .now()
+            .year}') - 01000000;
+
+        if (totaymenostrinta == int.parse("${userInfos['AssinaturaTime'].replaceAll('/', '')}")) {
+          onlyMyLocate = userInfos['exibirApenasEmMinhaLocalização'];
+        } else {
+          if (userInfos['Debug'] == true) {
+            onlyMyLocate = userInfos['exibirApenasEmMinhaLocalização'];
+          } else {
+            onlyMyLocate = true;
+          }
+        }
+      }
+
       localData = "${placemark.subAdministrativeArea}";
       sex = userInfos['Genero'];
       opositeSex = userInfos['GeneroProcura'];
@@ -409,11 +453,20 @@ class _SwapWidgetsState extends State<SwapWidgets> {
   }
 
   @override
+  void initState() {
+
+    if (mounted) {
+       WidgetsFlutterBinding.ensureInitialized();
+       swapedToMakeAlgo();
+    }
+
+    super.initState();
+  }
+  @override
   Widget build(BuildContext context) {
     return LayoutBuilder(builder: (context, constrains){
 
       if(startad == false){
-        swapedToMakeAlgo();
         return const Center(
             child: CircularProgressIndicator()
         );
@@ -483,7 +536,7 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                     return Stack(
                       children: snapshot.data!.docs.map((documents) {
                         if(documents['swaped'].contains(UID)){
-                          return Container();
+                          return Positioned(child: Container());
                         }else{
                           if(documents['Idade'] >= userInfos['idadeProcuraMin'] && documents['Idade'] <= userInfos['idadeProcura']){
                             return SwipeableCardsSection(
@@ -493,332 +546,374 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                                 Card(
                                   child: Stack(
                                     children: [
-                                      SizedBox.expand(
-                                        child: Material(
-                                          borderRadius: BorderRadius.circular(12.0),
-                                          child: Image.network(documents['urlfoto01']),
+                                      Positioned(
+                                        child: SizedBox(
+                                          child: Material(
+                                            borderRadius: BorderRadius.circular(12.0),
+                                            child: Image.network(documents['urlfoto01']),
+                                          ),
                                         ),
                                       ),
-                                      SizedBox.expand(
-                                        child: Container(
-                                          decoration: const BoxDecoration(
-                                              gradient: LinearGradient(
-                                                  colors: [Colors.transparent, Colors.black54],
-                                                  begin: Alignment.center,
-                                                  end: Alignment.bottomCenter
+                                      Positioned(
+                                        child: SizedBox(
+                                          child: Container(
+                                            decoration: const BoxDecoration(
+                                                gradient: LinearGradient(
+                                                    colors: [Colors.transparent, Colors.black54],
+                                                    begin: Alignment.center,
+                                                    end: Alignment.bottomCenter
+                                                )
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Positioned(
+                                        child: Align(
+                                          alignment: Alignment.bottomLeft,
+                                          child: Container(
+                                              padding: const EdgeInsets.symmetric(vertical: 125, horizontal: 25),
+                                              child: Column(
+                                                mainAxisAlignment: MainAxisAlignment.end,
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: <Widget>[
+                                                  Row(
+                                                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                    children: [
+                                                      Container(
+                                                        padding: const EdgeInsets.all(10),
+                                                        child: Text(documents['Nome'],
+                                                            style: const TextStyle(
+                                                                color: Colors.white,
+                                                                fontSize: 20.0,
+                                                                fontWeight: FontWeight.w700)),
+                                                      ),
+                                                      Container(
+                                                        padding: const EdgeInsets.all(10),
+                                                        child: Text("Idade: ${documents['Idade']}",
+                                                            textAlign: TextAlign.start,
+                                                            style: const TextStyle(
+                                                                fontSize: 18,
+                                                                color: Colors.white
+                                                            )
+                                                        ),
+                                                      ),
+                                                      Container(
+                                                        padding: const EdgeInsets.all(10),
+                                                        child: Text("Cidade: ${documents['LocalizaçãoDefault']}",
+                                                            textAlign: TextAlign.start,
+                                                            style: const TextStyle(
+                                                                fontSize: 18,
+                                                                color: Colors.white
+                                                            )
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const Padding(
+                                                      padding: EdgeInsets.only(bottom: 8.0)
+                                                  ),
+                                                  Text("${documents['Detalhes']}",
+                                                      textAlign: TextAlign.start,
+                                                      style: const TextStyle(
+                                                          color: Colors.white
+                                                      )
+                                                  ),
+                                                ],
                                               )
                                           ),
                                         ),
                                       ),
-                                      Align(
-                                        alignment: Alignment.bottomLeft,
+                                      Positioned(
                                         child: Container(
-                                            padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-                                            child: Column(
-                                              mainAxisAlignment: MainAxisAlignment.end,
-                                              crossAxisAlignment: CrossAxisAlignment.start,
-                                              children: <Widget>[
-                                                Text(documents['Nome'],
-                                                    style: const TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 20.0,
-                                                        fontWeight: FontWeight.w700)),
-                                                const Padding(
-                                                    padding: EdgeInsets.only(bottom: 8.0)
-                                                ),
-                                                Text("${documents['Detalhes']}",
-                                                    textAlign: TextAlign.start,
-                                                    style: const TextStyle(color: Colors.white)
-                                                ),
-                                              ],
-                                            )
-                                        ),
-                                      ),
-                                      Container(
-                                        padding: const EdgeInsets.all(70),
-                                        child: Align(
-                                          alignment: Alignment.bottomRight,
-                                          child: ElevatedButton(onPressed: () async {
-                                            setState(() {
-                                              makeActions ++;
-                                            });
-
-                                            if(makeActions == 15){
-                                              //TODO recheck location and exibir anuncio
-                                              swapedToMakeAlgo();
+                                          padding: const EdgeInsets.all(20),
+                                          child: Align(
+                                            alignment: Alignment.bottomRight,
+                                            child: ElevatedButton(onPressed: () async {
                                               setState(() {
-                                                makeActions = 0;
+                                                makeActions ++;
                                               });
-                                              if(isPremium == false){
-                                                interAd(isPremium);
+
+                                              if(makeActions == 15){
+                                                //TODO recheck location and exibir anuncio
+                                                swapedToMakeAlgo();
+                                                setState(() {
+                                                  makeActions = 0;
+                                                });
+                                                if(isPremium == false){
+                                                  interAd(isPremium);
+                                                }
                                               }
-                                            }
 
-                                            var resulte = await FirebaseFirestore.instance
-                                                .collection("Usuarios")
-                                                .doc(UID)
-                                                .get();
+                                              var resulte = await FirebaseFirestore.instance
+                                                  .collection("Usuarios")
+                                                  .doc(UID)
+                                                  .get();
 
-                                            List listLike = documents['like'];
-                                            List swapList = documents['swaped'];
-                                            //todo swap;
+                                              List listLike = documents['like'];
+                                              List swapList = documents['swaped'];
+                                              //todo swap;
 
-                                            listLike.add('true $UID');
-                                            swapList.add(UID);
+                                              listLike.add('true $UID');
+                                              swapList.add(UID);
 
-                                            FirebaseFirestore.instance.collection('Usuarios').doc(documents['uid']).update({
-                                              'like': listLike,
-                                              'swaped': swapList,
-                                            }).whenComplete((){
-                                              FirebaseFirestore.instance.collection('Likes').doc().set({
-                                                'Liked': documents['uid'],
-                                                'QuemCurtiu': UID,
-                                                'QuemCurtiuNome': resulte['Nome'],
-                                                'Data': '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year} ',
-                                                'Hora': '${DateTime.now().hour}:${DateTime.now().minute}',
+                                              FirebaseFirestore.instance.collection('Usuarios').doc(documents['uid']).update({
+                                                'like': listLike,
+                                                'swaped': swapList,
                                               }).whenComplete((){
+                                                FirebaseFirestore.instance.collection('Likes').doc().set({
+                                                  'Liked': documents['uid'],
+                                                  'QuemCurtiu': UID,
+                                                  'QuemCurtiuNome': resulte['Nome'],
+                                                  'Data': '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year} ',
+                                                  'Hora': '${DateTime.now().hour}:${DateTime.now().minute}',
+                                                }).whenComplete((){
 
 
-                                                if(resulte['like'].contains('true ${documents['uid']}')){
+                                                  if(resulte['like'].contains('true ${documents['uid']}')){
 
-                                                  var uuid = const Uuid().v4();
-                                                  var uuid2 = const Uuid().v4();
+                                                    var uuid = const Uuid().v4();
+                                                    var uuid2 = const Uuid().v4();
 
-                                                  String IDChat = uuid;
-                                                  String IDAchat = uuid2;
-                                                  String IDMenssagem = "${DateTime.now()} $uuid2";
+                                                    String IDChat = uuid;
+                                                    String IDAchat = uuid2;
+                                                    String IDMenssagem = "${DateTime.now()} $uuid2";
 
-                                                  FirebaseFirestore.instance.collection("ChatCollection").doc(IDChat).set({
-                                                    'id': IDChat,
-                                                    'PertenceA': "$UID",
-                                                    'PertenceA2': documents['uid'],
-                                                    'Nome': resulte['Nome'],
-                                                    'Nome2': documents['Nome'],
-                                                  });
-
-                                                  FirebaseFirestore.instance.collection('ChatCollection').doc(IDChat).collection('Mensagens').doc(IDMenssagem).set({
-                                                    'id': IDMenssagem,
-                                                    'PertenceA': "$UID",
-                                                    'Nome': resulte['Nome'],
-                                                    'Data': '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year} ',
-                                                    'Hora': '${DateTime.now().hour}:${DateTime.now().minute}',
-                                                    'Mensagem' : '${resulte['Nome']} e ${documents['Nome']} fizeram um match!',
-                                                  }).whenComplete((){
-                                                    FirebaseFirestore.instance.collection('DocChatIDs').doc(IDAchat).set({
-                                                      'URLUser1': resulte['urlfoto01'],
-                                                      'URLUser2': documents['urlfoto01'],
-                                                      "idDoc": IDAchat,
-                                                      'idChat': IDChat,
+                                                    FirebaseFirestore.instance.collection("ChatCollection").doc(IDChat).set({
+                                                      'id': IDChat,
+                                                      'PertenceA': "$UID",
+                                                      'PertenceA2': documents['uid'],
                                                       'Nome': resulte['Nome'],
                                                       'Nome2': documents['Nome'],
-                                                      'id1': UID,
-                                                      'id2': documents['uid'],
                                                     });
-                                                    Fluttertoast.showToast(
-                                                        msg: "Você fez um Match!",
-                                                        toastLength: Toast.LENGTH_SHORT,
-                                                        gravity: ToastGravity.CENTER,
-                                                        timeInSecForIosWeb: 1,
-                                                        backgroundColor: Colors.red,
-                                                        textColor: Colors.white,
-                                                        fontSize: 16.0
-                                                    );
-                                                  });
+
+                                                    FirebaseFirestore.instance.collection('ChatCollection').doc(IDChat).collection('Mensagens').doc(IDMenssagem).set({
+                                                      'id': IDMenssagem,
+                                                      'PertenceA': "$UID",
+                                                      'Nome': resulte['Nome'],
+                                                      'Data': '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year} ',
+                                                      'Hora': '${DateTime.now().hour}:${DateTime.now().minute}',
+                                                      'Mensagem' : '${resulte['Nome']} e ${documents['Nome']} fizeram um match!',
+                                                    }).whenComplete((){
+                                                      FirebaseFirestore.instance.collection('DocChatIDs').doc(IDAchat).set({
+                                                        'URLUser1': resulte['urlfoto01'],
+                                                        'URLUser2': documents['urlfoto01'],
+                                                        "idDoc": IDAchat,
+                                                        'idChat': IDChat,
+                                                        'Nome': resulte['Nome'],
+                                                        'Nome2': documents['Nome'],
+                                                        'id1': UID,
+                                                        'id2': documents['uid'],
+                                                      });
+                                                      Fluttertoast.showToast(
+                                                          msg: "Você fez um Match!",
+                                                          toastLength: Toast.LENGTH_SHORT,
+                                                          gravity: ToastGravity.CENTER,
+                                                          timeInSecForIosWeb: 1,
+                                                          backgroundColor: Colors.red,
+                                                          textColor: Colors.white,
+                                                          fontSize: 16.0
+                                                      );
+                                                    });
 
 
-                                                }else{
+                                                  }else{
 
-                                                }
+                                                  }
+                                                });
                                               });
-                                            });
-                                          },
-                                              child: const Icon(Icons.favorite)
+                                            },
+                                                child: const Icon(Icons.favorite)
+                                            ),
                                           ),
                                         ),
                                       ),
-                                      Container(
-                                        padding: const EdgeInsets.all(70),
-                                        child: Align(
-                                          alignment: Alignment.bottomLeft,
-                                          child: ElevatedButton(onPressed: () async {
-                                            setState(() {
-                                              makeActions ++;
-                                            });
-
-                                            if(makeActions == 15){
-                                              //TODO recheck location and exibir anuncio
-                                              swapedToMakeAlgo();
+                                      Positioned(
+                                        child: Container(
+                                          padding: const EdgeInsets.all(20),
+                                          child: Align(
+                                            alignment: Alignment.bottomLeft,
+                                            child: ElevatedButton(onPressed: () async {
                                               setState(() {
-                                                makeActions = 0;
+                                                makeActions ++;
                                               });
-                                              if(isPremium == false){
-                                                interAd(isPremium);
+
+                                              if(makeActions == 15){
+                                                //TODO recheck location and exibir anuncio
+                                                swapedToMakeAlgo();
+                                                setState(() {
+                                                  makeActions = 0;
+                                                });
+                                                if(isPremium == false){
+                                                  interAd(isPremium);
+                                                }
                                               }
-                                            }
 
-                                            var resulte = await FirebaseFirestore.instance
-                                                .collection("Usuarios")
-                                                .doc(UID)
-                                                .get();
+                                              var resulte = await FirebaseFirestore.instance
+                                                  .collection("Usuarios")
+                                                  .doc(UID)
+                                                  .get();
 
-                                            List listLike = documents['like'];
-                                            List swapList = documents['swaped'];
-                                            //todo swap;
+                                              List listLike = documents['like'];
+                                              List swapList = documents['swaped'];
+                                              //todo swap;
 
 
-                                            listLike.add('false $UID');
-                                            swapList.add(UID);
+                                              listLike.add('false $UID');
+                                              swapList.add(UID);
 
-                                            FirebaseFirestore.instance.collection('Usuarios').doc(documents['uid']).update({
-                                              'like': listLike,
-                                              'swaped': swapList,
-                                            }).whenComplete((){
-                                              FirebaseFirestore.instance.collection('Likes').doc().set({
-                                                'Liked': documents['uid'],
-                                                'QuemCurtiu': UID,
-                                                'QuemCurtiuNome': resulte['Nome'],
-                                                'Data': '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year} ',
-                                                'Hora': '${DateTime.now().hour}:${DateTime.now().minute}',
+                                              FirebaseFirestore.instance.collection('Usuarios').doc(documents['uid']).update({
+                                                'like': listLike,
+                                                'swaped': swapList,
+                                              }).whenComplete((){
+                                                FirebaseFirestore.instance.collection('Likes').doc().set({
+                                                  'Liked': documents['uid'],
+                                                  'QuemCurtiu': UID,
+                                                  'QuemCurtiuNome': resulte['Nome'],
+                                                  'Data': '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year} ',
+                                                  'Hora': '${DateTime.now().hour}:${DateTime.now().minute}',
+                                                });
                                               });
-                                            });
 
-                                          },
-                                              child: const Icon(Icons.close)
+                                            },
+                                                child: const Icon(Icons.close)
+                                            ),
                                           ),
                                         ),
                                       ),
-                                      Container(
-                                        padding: const EdgeInsets.all(70),
-                                        child: Align(
-                                          alignment: Alignment.bottomCenter,
-                                          child: ElevatedButton(onPressed: (){
-                                            showDialog(
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                String mensagemtext = '';
-                                                return StatefulBuilder(builder: (BuildContext context, StateSetter setState){
-                                                  return AlertDialog(
-                                                    title: const Text('Iniciar um chat com esse usuario?'),
-                                                    actions: [
-                                                      Center(
-                                                        child: Column(
-                                                          children: [
-                                                            Container(
-                                                              padding: const EdgeInsets.all(16),
-                                                              child: TextFormField(
-                                                                keyboardType: TextInputType.text,
-                                                                onChanged: (valor){
-                                                                  mensagemtext = valor;
-                                                                  //Mudou mandou para a String
-                                                                },
-                                                                decoration: const InputDecoration(
-                                                                  border: OutlineInputBorder(),
-                                                                  hintText: 'Mensagem',
+                                      Positioned(
+                                        child: Container(
+                                          padding: const EdgeInsets.all(20),
+                                          child: Align(
+                                            alignment: Alignment.bottomCenter,
+                                            child: ElevatedButton(onPressed: (){
+                                              showDialog(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  String mensagemtext = '';
+                                                  return StatefulBuilder(builder: (BuildContext context, StateSetter setState){
+                                                    return AlertDialog(
+                                                      title: const Text('Iniciar um chat com esse usuario?'),
+                                                      actions: [
+                                                        Center(
+                                                          child: Column(
+                                                            children: [
+                                                              Container(
+                                                                padding: const EdgeInsets.all(16),
+                                                                child: TextFormField(
+                                                                  keyboardType: TextInputType.text,
+                                                                  onChanged: (valor){
+                                                                    mensagemtext = valor;
+                                                                    //Mudou mandou para a String
+                                                                  },
+                                                                  decoration: const InputDecoration(
+                                                                    border: OutlineInputBorder(),
+                                                                    hintText: 'Mensagem',
+                                                                  ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                            Row(
-                                                              crossAxisAlignment: CrossAxisAlignment.center,
-                                                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                                              children: [
-                                                                TextButton(onPressed: (){
-                                                                  Navigator.of(context).pop();
-                                                                }, child: const Text('Cancelar')
-                                                                ),
-                                                                TextButton(onPressed: () async {
-                                                                  if(mensagemtext == ''){
-                                                                    Fluttertoast.showToast(
-                                                                        msg: "A mensagem não pode estar vazia!",
-                                                                        toastLength: Toast.LENGTH_SHORT,
-                                                                        gravity: ToastGravity.CENTER,
-                                                                        timeInSecForIosWeb: 1,
-                                                                        backgroundColor: Colors.red,
-                                                                        textColor: Colors.white,
-                                                                        fontSize: 16.0
-                                                                    );
-                                                                  }else{
-                                                                    var resulte = await FirebaseFirestore.instance
-                                                                        .collection("Usuarios")
-                                                                        .doc(UID)
-                                                                        .get();
-                                                                    var uuid = const Uuid().v4();
-                                                                    var uuid2 = const Uuid().v4();
+                                                              Row(
+                                                                crossAxisAlignment: CrossAxisAlignment.center,
+                                                                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                                                children: [
+                                                                  TextButton(onPressed: (){
+                                                                    Navigator.of(context).pop();
+                                                                  }, child: const Text('Cancelar')
+                                                                  ),
+                                                                  TextButton(onPressed: () async {
+                                                                    if(mensagemtext == ''){
+                                                                      Fluttertoast.showToast(
+                                                                          msg: "A mensagem não pode estar vazia!",
+                                                                          toastLength: Toast.LENGTH_SHORT,
+                                                                          gravity: ToastGravity.CENTER,
+                                                                          timeInSecForIosWeb: 1,
+                                                                          backgroundColor: Colors.red,
+                                                                          textColor: Colors.white,
+                                                                          fontSize: 16.0
+                                                                      );
+                                                                    }else{
+                                                                      var resulte = await FirebaseFirestore.instance
+                                                                          .collection("Usuarios")
+                                                                          .doc(UID)
+                                                                          .get();
+                                                                      var uuid = const Uuid().v4();
+                                                                      var uuid2 = const Uuid().v4();
 
-                                                                    String IDChat = uuid;
-                                                                    String IDAchat = uuid2;
-                                                                    String IDMenssagem = "${DateTime.now()} $uuid2";
+                                                                      String IDChat = uuid;
+                                                                      String IDAchat = uuid2;
+                                                                      String IDMenssagem = "${DateTime.now()} $uuid2";
 
-                                                                    FirebaseFirestore.instance.collection("ChatCollection").doc(IDChat).set({
-                                                                      'id': IDChat,
-                                                                      'PertenceA': "$UID",
-                                                                      'PertenceA2': documents['uid'],
-                                                                      'Nome': resulte['Nome'],
-                                                                      'Nome2': documents['Nome'],
-                                                                    });
-
-                                                                    FirebaseFirestore.instance.collection('ChatCollection').doc(IDChat).collection('Mensagens').doc(IDMenssagem).set({
-                                                                      'id': IDMenssagem,
-                                                                      'PertenceA': "$UID",
-                                                                      'Nome': resulte['Nome'],
-                                                                      'Data': '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year} ',
-                                                                      'Hora': '${DateTime.now().hour}:${DateTime.now().minute}',
-                                                                      'Mensagem' : mensagemtext,
-                                                                    }).whenComplete((){
-                                                                      FirebaseFirestore.instance.collection('DocChatIDs').doc(IDAchat).set({
-                                                                        'URLUser1': resulte['urlfoto01'],
-                                                                        'URLUser2': documents['urlfoto01'],
-                                                                        "idDoc": IDAchat,
-                                                                        'idChat': IDChat,
+                                                                      FirebaseFirestore.instance.collection("ChatCollection").doc(IDChat).set({
+                                                                        'id': IDChat,
+                                                                        'PertenceA': "$UID",
+                                                                        'PertenceA2': documents['uid'],
                                                                         'Nome': resulte['Nome'],
                                                                         'Nome2': documents['Nome'],
-                                                                        'id1': UID,
-                                                                        'id2': documents['uid'],
-                                                                        'LastMensage': '${resulte['Nome']}: $mensagemtext',
+                                                                      });
+
+                                                                      FirebaseFirestore.instance.collection('ChatCollection').doc(IDChat).collection('Mensagens').doc(IDMenssagem).set({
+                                                                        'id': IDMenssagem,
+                                                                        'PertenceA': "$UID",
+                                                                        'Nome': resulte['Nome'],
                                                                         'Data': '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year} ',
                                                                         'Hora': '${DateTime.now().hour}:${DateTime.now().minute}',
-                                                                      }).then((value){
-                                                                        List listLike = documents['like'];
-                                                                        List swapList = documents['swaped'];
-                                                                        listLike.add('true $UID');
-                                                                        swapList.add(UID);
+                                                                        'Mensagem' : mensagemtext,
+                                                                      }).whenComplete((){
+                                                                        FirebaseFirestore.instance.collection('DocChatIDs').doc(IDAchat).set({
+                                                                          'URLUser1': resulte['urlfoto01'],
+                                                                          'URLUser2': documents['urlfoto01'],
+                                                                          "idDoc": IDAchat,
+                                                                          'idChat': IDChat,
+                                                                          'Nome': resulte['Nome'],
+                                                                          'Nome2': documents['Nome'],
+                                                                          'id1': UID,
+                                                                          'id2': documents['uid'],
+                                                                          'LastMensage': '${resulte['Nome']}: $mensagemtext',
+                                                                          'Data': '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year} ',
+                                                                          'Hora': '${DateTime.now().hour}:${DateTime.now().minute}',
+                                                                        }).then((value){
+                                                                          List listLike = documents['like'];
+                                                                          List swapList = documents['swaped'];
+                                                                          listLike.add('true $UID');
+                                                                          swapList.add(UID);
 
-                                                                        FirebaseFirestore.instance.collection('Usuarios').doc(documents['uid']).update({
-                                                                          'like': listLike,
-                                                                          'swaped': swapList,
-                                                                        }).whenComplete((){
-                                                                          FirebaseFirestore.instance.collection('Likes').doc().set({
-                                                                            'Liked': documents['uid'],
-                                                                            'QuemCurtiu': UID,
-                                                                            'QuemCurtiuNome': resulte['Nome'],
-                                                                            'Data': '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year} ',
-                                                                            'Hora': '${DateTime.now().hour}:${DateTime.now().minute}',
+                                                                          FirebaseFirestore.instance.collection('Usuarios').doc(documents['uid']).update({
+                                                                            'like': listLike,
+                                                                            'swaped': swapList,
                                                                           }).whenComplete((){
-                                                                            //todo go to chat activity
-                                                                            Navigator.of(context).pop();
-                                                                            Navigator.push(context,
-                                                                                MaterialPageRoute(builder: (context){
-                                                                                  return chatActivity(IDChat, documents['Nome'], IDAchat);
-                                                                                }));
+                                                                            FirebaseFirestore.instance.collection('Likes').doc().set({
+                                                                              'Liked': documents['uid'],
+                                                                              'QuemCurtiu': UID,
+                                                                              'QuemCurtiuNome': resulte['Nome'],
+                                                                              'Data': '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year} ',
+                                                                              'Hora': '${DateTime.now().hour}:${DateTime.now().minute}',
+                                                                            }).whenComplete((){
+                                                                              //todo go to chat activity
+                                                                              Navigator.of(context).pop();
+                                                                              Navigator.push(context,
+                                                                                  MaterialPageRoute(builder: (context){
+                                                                                    return chatActivity(IDChat, documents['Nome'], IDAchat);
+                                                                                  }));
+                                                                            });
                                                                           });
                                                                         });
                                                                       });
-                                                                    });
-                                                                  }
-                                                                }, child: const Text('Enviar')
-                                                                ),
-                                                              ],
-                                                            )
-                                                          ],
-                                                        ),
-                                                      )
-                                                    ],
+                                                                    }
+                                                                  }, child: const Text('Enviar')
+                                                                  ),
+                                                                ],
+                                                              )
+                                                            ],
+                                                          ),
+                                                        )
+                                                      ],
+                                                    );
+                                                  },
                                                   );
                                                 },
-                                                );
-                                              },
-                                            );
-                                          },
-                                              child: const Icon(Icons.chat_bubble)
+                                              );
+                                            },
+                                                child: const Icon(Icons.chat_bubble)
+                                            ),
                                           ),
                                         ),
                                       )
@@ -978,7 +1073,7 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                               enableSwipeDown: false,
                             );
                           }else{
-                            return Container();
+                            return Positioned(child: Container());
                           }
                         }
                       }).toList(),

@@ -90,6 +90,9 @@ class _profileSettingsState extends State<profileSettings> {
         });
       }
     }
+    if(widget.isPremium == false){
+      cidadePremium = true;
+    }
   }
 
 
@@ -112,6 +115,12 @@ class _profileSettingsState extends State<profileSettings> {
     // Recupere a URL do download da imagem para salvar no banco de dados
     final url = await reference.getDownloadURL();
     return url;
+  }
+
+  @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
   }
 
   @override
@@ -435,6 +444,15 @@ class _profileSettingsState extends State<profileSettings> {
                                           Fluttertoast.showToast(
                                               msg: "Informações atualizadas!",
                                               toastLength: Toast.LENGTH_SHORT,
+                                              gravity: ToastGravity.CENTER,
+                                              timeInSecForIosWeb: 1,
+                                              backgroundColor: Colors.red,
+                                              textColor: Colors.white,
+                                              fontSize: 16.0
+                                          );
+                                          Fluttertoast.showToast(
+                                              msg: "Talvez por algumas auterações é necessario reiniciar o aplicativo para que entrem em vigor.",
+                                              toastLength: Toast.LENGTH_LONG,
                                               gravity: ToastGravity.CENTER,
                                               timeInSecForIosWeb: 1,
                                               backgroundColor: Colors.red,

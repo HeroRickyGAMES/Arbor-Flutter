@@ -52,8 +52,17 @@ class _likeActivityState extends State<likeActivity> {
                       }
                       return Container(
                         padding: const EdgeInsets.all(16),
-                        child: ListView(
+                        child:
+                        snapshot.data!.docs.isEmpty ?
+                        Center(
+                          child: Container(
+                            padding: EdgeInsets.all(16),
+                            child: Text('Ninguém ainda te curtiu. ;-; não se preocupe logo irá aparecer alguém que curta você! :)'),
+                          ),
+                        ):
+                        ListView(
                           children: snapshot.data!.docs.map((documents){
+                           
                             return Column(
                               children: [
                                 Row(
