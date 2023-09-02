@@ -7,7 +7,6 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
 
 //Desenvolvido por HeroRickyGames
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -36,11 +35,43 @@ class _LoginScreenState extends State<LoginScreen> {
     if (permission == LocationPermission.denied) {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
-        // Permissions are denied, next time you could try
-        // requesting permissions again (this is also where
-        // Android's shouldShowRequestPermissionRationale
-        // returned true. According to Android guidelines
-        // your App should show an explanatory UI now.
+        Fluttertoast.showToast(
+            msg: "Recomendamos fortemente que você permita a permissão de localização,",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+        Fluttertoast.showToast(
+            msg: " caso você não garanta essa permissão infelizmente o aplicativo",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+
+        Fluttertoast.showToast(
+            msg: " não irá funcionar corretamente em seu disposito!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
+        Fluttertoast.showToast(
+            msg: "Isso pode gerar banimentos permanentes em sua conta caso você não utilise o GPS!",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.CENTER,
+            timeInSecForIosWeb: 1,
+            backgroundColor: Colors.red,
+            textColor: Colors.white,
+            fontSize: 16.0
+        );
         return Future.error('Location permissions are denied');
       }
     }
@@ -135,7 +166,22 @@ class _LoginScreenState extends State<LoginScreen> {
                               fontSize: 16.0
                           );
                         }else{
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return const AlertDialog(
+                                title: Text('Aguarde!'),
+                                actions: [
+                                  Center(
+                                      child: CircularProgressIndicator()
+                                  )
+                                ],
+                              );
+                            },
+                          );
+
                           _auth.signInWithEmailAndPassword(email: Email, password: Senha).whenComplete(() {
+                            Navigator.of(context).pop();
                             Navigator.pop(context);
                             Navigator.push(context,
                                 MaterialPageRoute(builder: (context){

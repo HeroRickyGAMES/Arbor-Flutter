@@ -8,6 +8,7 @@ import 'package:arbor/profile/profile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
@@ -105,7 +106,6 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
         _notificationsEnabled = granted ?? false;
 
         prefs.setString('Foi Negado', '$granted');
-        //não garantido
       }else{
         _notificationsEnabled = granted;
         //garantido
@@ -125,7 +125,7 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
           MobileAds.instance.initialize();
           InterstitialAd? _interstitialAd;
           int _numInterstitialLoadAttempts = 0;
-          final AdRequest request = const AdRequest(
+          const AdRequest request = AdRequest(
             keywords: <String>['foo', 'bar'],
             contentUrl: 'http://foo.com/bar.html',
             nonPersonalizedAds: true,
@@ -396,60 +396,91 @@ class _SwapWidgetsState extends State<SwapWidgets> {
         .doc(UID)
         .get();
 
+    try{
+      Position currentPosition = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+      List<Placemark> placemarks = await placemarkFromCoordinates(
+        currentPosition.latitude,
+        currentPosition.longitude,
+      );
 
-    Position currentPosition = await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.high,
-    );
-    List<Placemark> placemarks = await placemarkFromCoordinates(
-      currentPosition.latitude,
-      currentPosition.longitude,
-    );
-
-    Placemark placemark = placemarks.first;
-    WidgetsFlutterBinding.ensureInitialized();
-    setState(() {
-      if(userInfos['AssinaturaTime'] == ""){
-        if(userInfos['Debug'] == true){
-          onlyMyLocate = userInfos['exibirApenasEmMinhaLocalização'];
-        }else{
-          onlyMyLocate = true;
-        }
-      }else {
-        int totaymenostrinta = int.parse('${DateTime
-            .now()
-            .month}${DateTime
-            .now()
-            .day}${DateTime
-            .now()
-            .year}') - 01000000;
-
-        if (totaymenostrinta == int.parse("${userInfos['AssinaturaTime'].replaceAll('/', '')}")) {
-          onlyMyLocate = userInfos['exibirApenasEmMinhaLocalização'];
-        } else {
-          if (userInfos['Debug'] == true) {
+      Placemark placemark = placemarks.first;
+      WidgetsFlutterBinding.ensureInitialized();
+      setState(() {
+        if(userInfos['AssinaturaTime'] == ""){
+          if(userInfos['Debug'] == true){
             onlyMyLocate = userInfos['exibirApenasEmMinhaLocalização'];
-          } else {
+          }else{
             onlyMyLocate = true;
           }
+        }else {
+          int totaymenostrinta = int.parse('${DateTime
+              .now()
+              .month}${DateTime
+              .now()
+              .day}${DateTime
+              .now()
+              .year}') - 01000000;
+
+          if (totaymenostrinta == int.parse("${userInfos['AssinaturaTime'].replaceAll('/', '')}")) {
+            onlyMyLocate = userInfos['exibirApenasEmMinhaLocalização'];
+          } else {
+            if (userInfos['Debug'] == true) {
+              onlyMyLocate = userInfos['exibirApenasEmMinhaLocalização'];
+            } else {
+              onlyMyLocate = true;
+            }
+          }
         }
+
+        localData = "${placemark.subAdministrativeArea}";
+        sex = userInfos['Genero'];
+        opositeSex = userInfos['GeneroProcura'];
+
+        if(opositeSex == sex){
+          isSameSexAndOposite = true;
+        }else{
+          isSameSexAndOposite = false;
+        }
+
+        startad = true;
+      });
+
+      FirebaseFirestore.instance.collection('Usuarios').doc(UID).update({
+        'LocalizaçãoDefault': localData,
+      });
+    }catch(e){
+      if(e.toString() == 'User denied permissions to access the device\'s location.'){
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Detectamos um problema!'),
+              actions: [
+                const Center(
+                  child: Text('Para melhor uso do aplicativo precisamos da permissão de localização ativa.'),
+                ),
+                Center(
+                  child: Container(
+                    padding: const EdgeInsets.all(16),
+                    child: TextButton(onPressed: () async {
+                      LocationPermission permission;
+                      permission = await Geolocator.requestPermission();
+                      swapedToMakeAlgo();
+                      Navigator.of(context).pop();
+                    },
+                        child: const Text('Habilitar a permissão')
+                    ),
+                  ),
+                )
+              ],
+            );
+          },
+        );
       }
-
-      localData = "${placemark.subAdministrativeArea}";
-      sex = userInfos['Genero'];
-      opositeSex = userInfos['GeneroProcura'];
-
-      if(opositeSex == sex){
-        isSameSexAndOposite = true;
-      }else{
-        isSameSexAndOposite = false;
-      }
-
-      startad = true;
-    });
-
-    FirebaseFirestore.instance.collection('Usuarios').doc(UID).update({
-      'LocalizaçãoDefault': localData,
-    });
+    }
   }
 
   @override
@@ -531,6 +562,27 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                     if (!snapshot.hasData) {
                       return const Center(
                         child: CircularProgressIndicator(),
+                      );
+                    }
+
+                    if(snapshot.data!.docs.isEmpty){
+                      return Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              child: const Icon(
+                                  Icons.heart_broken,
+                                size: 100,
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.all(16),
+                              child: const Text('Não há ninguém perto de você ;-; não se preocupe, logo irá aparecer alguém proximo a você!'),
+                            ),
+                          ],
+                        ),
                       );
                     }
                     return Stack(

@@ -391,7 +391,10 @@ class _CadastreseState extends State<Cadastrese> {
                                         'like': [''],
                                         'swaped': [''],
                                         'Detalhes': '',
-                                        'exibirApenasEmMinhaLocalização': true
+                                        'exibirApenasEmMinhaLocalização': true,
+                                        'ativo': true,
+                                        'banMotivo': '',
+                                        'reportNumber': 0
                                       });
                                     }).whenComplete(() {
                                       Navigator.of(context).pop();

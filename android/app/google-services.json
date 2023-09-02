@@ -7,14 +7,14 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:475003588315:android:b4679d50cf8ecce7e046fe",
+        "mobilesdk_app_id": "1:475003588315:android:e35b245fa6e7ff92e046fe",
         "android_client_info": {
-          "package_name": "com.example.lovers_ai_to_kanjo"
+          "package_name": "com.herorickystudios.flutter.arbor"
         }
       },
       "oauth_client": [
         {
-          "client_id": "475003588315-85ttr5f92gmj552nf9ticreb2d1087e3.apps.googleusercontent.com",
+          "client_id": "475003588315-n4a9gl2fjrlqg3dbu4m2uv3kb6a9u61c.apps.googleusercontent.com",
           "client_type": 3
         }
       ],

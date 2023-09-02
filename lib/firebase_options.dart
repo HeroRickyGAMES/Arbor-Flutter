@@ -17,7 +17,10 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      return web;
+      throw UnsupportedError(
+        'DefaultFirebaseOptions have not been configured for web - '
+        'you can reconfigure this by running the FlutterFire CLI again.',
+      );
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
@@ -49,19 +52,9 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyD6eCI3AhBRrDtnClUmEN9f4rSARZl5g44',
-    appId: '1:475003588315:web:c0da90629bf1f8d3e046fe',
-    messagingSenderId: '475003588315',
-    projectId: 'lovers-ai-to-kanjo',
-    authDomain: 'lovers-ai-to-kanjo.firebaseapp.com',
-    storageBucket: 'lovers-ai-to-kanjo.appspot.com',
-    measurementId: 'G-7W79E52ESF',
-  );
-
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyDkgHI9A1qfJcqQjfx0dov1GKaQOyc8Ibo',
-    appId: '1:475003588315:android:b4679d50cf8ecce7e046fe',
+    appId: '1:475003588315:android:e35b245fa6e7ff92e046fe',
     messagingSenderId: '475003588315',
     projectId: 'lovers-ai-to-kanjo',
     storageBucket: 'lovers-ai-to-kanjo.appspot.com',

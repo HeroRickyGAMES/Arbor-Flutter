@@ -87,6 +87,14 @@ class _chatActivityState extends State<chatActivity> {
                             child: CircularProgressIndicator(),
                           );
                         }
+                        if(snapshot.data!.docs.isEmpty){
+                          return Center(
+                            child: Container(
+                              padding: const EdgeInsets.all(16),
+                              child: const Text('Você ainda não tem nenhum chat ;-;'),
+                            ),
+                          );
+                        }
                         return Container(
                           padding: const EdgeInsets.all(16),
                           child: ListView(

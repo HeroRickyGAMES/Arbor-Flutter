@@ -415,7 +415,6 @@ class _profileSettingsState extends State<profileSettings> {
                                       );
                                     }else{
                                       if(int.parse(minIdade) < int.parse(maxIdade)){
-
                                         showDialog(
                                           context: context,
                                           builder: (BuildContext context) {
