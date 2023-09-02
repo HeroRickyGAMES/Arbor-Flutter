@@ -26,6 +26,7 @@ var UID = FirebaseAuth.instance.currentUser?.uid;
 SwipeableCardSectionController _cardController = SwipeableCardSectionController();
 String localData = '';
 bool startad = false;
+bool startade = false;
 var userInfos;
 bool onlyMyLocate = true;
 int makeActions = 0;
@@ -214,9 +215,9 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
             children: [
               _currentIndex == 0 ?
               SizedBox(
-                  width: double.infinity,
-                  height: constrains.maxHeight - 275,
-                  child: const SwapWidgets(),
+                width: double.infinity,
+                height: constrains.maxHeight - 275,
+                child: const SwapWidgets(),
               )
                   :
               _currentIndex == 1 ?
@@ -273,7 +274,7 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
                                   child: Column(
                                     children: [
                                       const Text(
-                                          'Com o premium temporario você tem todos os recursos premium em uma unica sessão sem pagar nada!',
+                                        'Com o premium temporario você tem todos os recursos premium em uma unica sessão sem pagar nada!',
                                         textAlign: TextAlign.center,
                                         style: TextStyle(
                                             fontSize: 18,
@@ -315,7 +316,7 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
                                             fontSize: 16.0
                                         );
                                       }, child: const Text(
-                                          'Seja premium temporario!',
+                                        'Seja premium temporario!',
                                         style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold
@@ -487,8 +488,8 @@ class _SwapWidgetsState extends State<SwapWidgets> {
   void initState() {
 
     if (mounted) {
-       WidgetsFlutterBinding.ensureInitialized();
-       swapedToMakeAlgo();
+      WidgetsFlutterBinding.ensureInitialized();
+      swapedToMakeAlgo();
     }
 
     super.initState();
@@ -549,7 +550,7 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                       .where('GeneroProcura', isEqualTo: sex)
                       .where('Genero', isEqualTo: sex)
                       .snapshots()
-                  :
+                      :
                   FirebaseFirestore
                       .instance
                       .collection('Usuarios')
@@ -567,24 +568,37 @@ class _SwapWidgetsState extends State<SwapWidgets> {
 
                     if(snapshot.data!.docs.isEmpty){
                       return Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
+                        child: Stack(
                           children: [
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              child: const Icon(
-                                  Icons.heart_broken,
-                                size: 100,
+                            startade == false ? Center(
+                              child: CircularProgressIndicator(),
+                            ): Container(),
+                            Center(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(16),
+                                    child: const Icon(
+                                      Icons.heart_broken,
+                                      size: 100,
+                                    ),
+                                  ),
+                                  Container(
+                                    padding: const EdgeInsets.all(16),
+                                    child: const Text('Não há ninguém perto de você ;-; não se preocupe, logo irá aparecer alguém proximo a você!'),
+                                  ),
+                                ],
                               ),
                             ),
-                            Container(
-                              padding: const EdgeInsets.all(16),
-                              child: const Text('Não há ninguém perto de você ;-; não se preocupe, logo irá aparecer alguém proximo a você!'),
-                            ),
-                          ],
+                          ]
                         ),
                       );
                     }
+
+                    startade = true;
+
                     return Stack(
                       children: snapshot.data!.docs.map((documents) {
                         if(documents['swaped'].contains(UID)){
@@ -600,9 +614,11 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                                     children: [
                                       Positioned(
                                         child: SizedBox(
-                                          child: Material(
-                                            borderRadius: BorderRadius.circular(12.0),
-                                            child: Image.network(documents['urlfoto01']),
+                                          child: Center(
+                                            child: Material(
+                                              borderRadius: BorderRadius.circular(12.0),
+                                              child: Image.network(documents['urlfoto01']),
+                                            ),
                                           ),
                                         ),
                                       ),
@@ -1084,15 +1100,15 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                                   });
 
                                   if(makeActions == 15){
-                                              //TODO recheck location and exibir anuncio
-                                              swapedToMakeAlgo();
-                                              setState(() {
-                                                makeActions = 0;
-                                              });
-                                              if(isPremium == false){
-                                                interAd(isPremium);
-                                              }
-                                            }
+                                    //TODO recheck location and exibir anuncio
+                                    swapedToMakeAlgo();
+                                    setState(() {
+                                      makeActions = 0;
+                                    });
+                                    if(isPremium == false){
+                                      interAd(isPremium);
+                                    }
+                                  }
 
                                   var resulte = await FirebaseFirestore.instance
                                       .collection("Usuarios")
@@ -1139,4 +1155,3 @@ class _SwapWidgetsState extends State<SwapWidgets> {
     });
   }
 }
-

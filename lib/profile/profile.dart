@@ -290,46 +290,46 @@ class _profileSettingsState extends State<profileSettings> {
                   ),
                 ),
                 //PremiumFunctions
+                UID != 'IuWeYRTsFXcaEFTYoUo8h4VZh8m2' ?
                 Container(
                     padding: const EdgeInsets.all(16),
                     child: const Text(
                         'Premium'
                     )
-                ),
+                ): Container(),
+                UID != 'IuWeYRTsFXcaEFTYoUo8h4VZh8m2' ?
                 CheckboxListTile(
                   title: Row(
                     children: [
                       const Text(
                           'Exibir apenas pessoas proximas'
                       ),
-                      Container(
-                        child: TextButton(
-                          onPressed: (){
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  actions: [
-                                    Container(
-                                      padding: const EdgeInsets.all(16),
-                                      child: Center(
-                                        child: Column(
-                                          children: [
-                                            const Text('Exibe pessoas com base na sua localização levando a base do municipio que você está.'),
-                                            TextButton(onPressed: (){
-                                              Navigator.of(context).pop();
-                                            }, child: const Text('Prosseguir'))
-                                          ],
-                                        ),
+                      TextButton(
+                        onPressed: (){
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                actions: [
+                                  Container(
+                                    padding: const EdgeInsets.all(16),
+                                    child: Center(
+                                      child: Column(
+                                        children: [
+                                          const Text('Exibe pessoas com base na sua localização levando a base do municipio que você está.'),
+                                          TextButton(onPressed: (){
+                                            Navigator.of(context).pop();
+                                          }, child: const Text('Prosseguir'))
+                                        ],
                                       ),
-                                    )
-                                  ],
-                                );
-                              },
-                            );
-                          },
-                          child: const Icon(Icons.help_outline),
-                        ),
+                                    ),
+                                  )
+                                ],
+                              );
+                            },
+                          );
+                        },
+                        child: const Icon(Icons.help_outline),
                       )
                     ],
                   ),
@@ -342,7 +342,7 @@ class _profileSettingsState extends State<profileSettings> {
                   activeColor: Colors.blue,
                   checkColor: Colors.white,
                   controlAffinity: ListTileControlAffinity.leading,
-                ),
+                ): Container(),
                 Container(
                     padding: const EdgeInsets.all(16),
                     child: ElevatedButton(

@@ -5,6 +5,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:translator_plus/translator_plus.dart';
 
 //Desenvolvido por HeroRickyGames
 class LoginScreen extends StatefulWidget {
@@ -179,8 +180,26 @@ class _LoginScreenState extends State<LoginScreen> {
                               );
                             },
                           );
+                          _auth.signInWithEmailAndPassword(email: Email, password: Senha).catchError((e){
 
-                          _auth.signInWithEmailAndPassword(email: Email, password: Senha).whenComplete(() {
+                            print(e.toString());
+                            Navigator.of(context).pop();
+                            final translator = GoogleTranslator();
+
+                            String error = e.toString().replaceAll("[firebase_auth/wrong-password]", "").replaceAll("[firebase_auth/too-many-requests]", "").replaceAll("[firebase_auth/user-not-found]", "").replaceAll("[firebase_auth/invalid-email]", "").trim();
+                            translator.translate(error, from: 'en', to: 'pt').then((s) {
+                              Fluttertoast.showToast(
+                                  msg: "$s",
+                                  toastLength: Toast.LENGTH_SHORT,
+                                  gravity: ToastGravity.CENTER,
+                                  timeInSecForIosWeb: 1,
+                                  backgroundColor: Colors.red,
+                                  textColor: Colors.white,
+                                  fontSize: 16.0
+                              );
+                            });
+
+                          }).then((value){
                             Navigator.of(context).pop();
                             Navigator.pop(context);
                             Navigator.push(context,
