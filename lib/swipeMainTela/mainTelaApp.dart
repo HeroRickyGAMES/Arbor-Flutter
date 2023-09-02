@@ -35,7 +35,6 @@ String opositeSex = '';
 bool isSameSexAndOposite = false;
 bool isPremium = false;
 bool _notificationsEnabled = false;
-int lethcont = 0;
 List letContList = [];
 
 
@@ -604,7 +603,6 @@ class _SwapWidgetsState extends State<SwapWidgets> {
 
                     return Stack(
                       children: snapshot.data!.docs.map((documents) {
-                        lethcont = snapshot.data!.docs.length;
                         if(!documents['swaped'].contains(UID)){
                           if(documents['Idade'] >= userInfos['idadeProcuraMin'] && documents['Idade'] <= userInfos['idadeProcura']){
                             return SwipeableCardsSection(
@@ -1149,7 +1147,6 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                             return Positioned(child: Container());
                           }
                         }else{
-                          lethcont --;
                           letContList.add(documents['uid']);
 
                           print(letContList);
