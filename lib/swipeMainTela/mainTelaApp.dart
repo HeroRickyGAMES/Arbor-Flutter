@@ -35,6 +35,9 @@ String opositeSex = '';
 bool isSameSexAndOposite = false;
 bool isPremium = false;
 bool _notificationsEnabled = false;
+int lethcont = 0;
+List letContList = [];
+
 
 main(){
   WidgetsFlutterBinding.ensureInitialized();
@@ -570,7 +573,7 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                       return Center(
                         child: Stack(
                           children: [
-                            startade == false ? Center(
+                            startade == false ? const Center(
                               child: CircularProgressIndicator(),
                             ): Container(),
                             Center(
@@ -601,9 +604,8 @@ class _SwapWidgetsState extends State<SwapWidgets> {
 
                     return Stack(
                       children: snapshot.data!.docs.map((documents) {
-                        if(documents['swaped'].contains(UID)){
-                          return Positioned(child: Container());
-                        }else{
+                        lethcont = snapshot.data!.docs.length;
+                        if(!documents['swaped'].contains(UID)){
                           if(documents['Idade'] >= userInfos['idadeProcuraMin'] && documents['Idade'] <= userInfos['idadeProcura']){
                             return SwipeableCardsSection(
                               cardController: _cardController,
@@ -699,6 +701,7 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                                             child: ElevatedButton(onPressed: () async {
                                               setState(() {
                                                 makeActions ++;
+                                                print(letContList);
                                               });
 
                                               if(makeActions == 15){
@@ -789,6 +792,7 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                                                   }
                                                 });
                                               });
+                                              letContList.clear();
                                             },
                                                 child: const Icon(Icons.favorite)
                                             ),
@@ -1005,6 +1009,7 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                                 if(dir.toString() == 'Direction.right'){
                                   setState(() {
                                     makeActions ++;
+
                                   });
 
                                   if(makeActions == 15){
@@ -1143,6 +1148,31 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                           }else{
                             return Positioned(child: Container());
                           }
+                        }else{
+                          lethcont --;
+                          letContList.add(documents['uid']);
+
+                          print(letContList);
+
+                          return letContList.length == snapshot.data?.docs.length ? Center(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(16),
+                                  child: const Icon(
+                                    Icons.heart_broken,
+                                    size: 100,
+                                  ),
+                                ),
+                                Container(
+                                  padding: const EdgeInsets.all(16),
+                                  child: const Text('Não há ninguém perto de você ;-; não se preocupe, logo irá aparecer alguém proximo a você!'),
+                                ),
+                              ],
+                            ),
+                          ):Container();
                         }
                       }).toList(),
                     );
