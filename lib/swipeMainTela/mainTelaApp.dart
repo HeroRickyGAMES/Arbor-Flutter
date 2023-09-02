@@ -843,7 +843,7 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                                                   'Hora': '${DateTime.now().hour}:${DateTime.now().minute}',
                                                 });
                                               });
-
+                                              letContList.clear();
                                             },
                                                 child: const Icon(Icons.close)
                                             ),
@@ -967,6 +967,7 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                                                                           });
                                                                         });
                                                                       });
+                                                                      letContList.clear();
                                                                     }
                                                                   }, child: const Text('Enviar')
                                                                   ),
@@ -1095,6 +1096,7 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                                       }
                                     });
                                   });
+                                  letContList.clear();
                                 }
                                 //Desliked
                                 if(dir.toString() == 'Direction.left'){
@@ -1138,6 +1140,7 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                                       'Hora': '${DateTime.now().hour}:${DateTime.now().minute}',
                                     });
                                   });
+                                  letContList.clear();
                                 }
                               },
                               enableSwipeUp: true,
