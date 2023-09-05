@@ -71,7 +71,9 @@ class _ChatListState extends State<ChatList> {
                                   documents['idChat'],
                                   documents['Nome'] == NomeUser?
                                   documents['Nome2']: documents['Nome'],
-                                  documents['idDoc']
+                                  documents['idDoc'],
+                                  documents['Nome'] == NomeUser?documents['id2']:
+                                  documents['id1'],
                               );
                             })
                         );
@@ -139,7 +141,9 @@ class _ChatListState extends State<ChatList> {
                                     documents['idChat'],
                                     documents['Nome'] == NomeUser?
                                     documents['Nome2']: documents['Nome'],
-                                    documents['idDoc']
+                                    documents['idDoc'],
+                                    documents['Nome'] == NomeUser?documents['id2']:
+                                    documents['id1'],
                                 );
                               })
                           );
@@ -201,7 +205,7 @@ class _ChatListState extends State<ChatList> {
                       return Container();
                     }
                   }
-                }).toList().reversed.toList(),
+                }).toList(),
               );
             }
         ),

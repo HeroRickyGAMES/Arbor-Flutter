@@ -519,7 +519,7 @@ class _SwapWidgetsState extends State<SwapWidgets> {
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 border: Border.all(
-                  color: Colors.black,
+                  color: Colors.white,
                   width: 1.0,
                 ),
                 borderRadius: const BorderRadius.all(Radius.circular(5.0)),
@@ -568,39 +568,38 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                       );
                     }
 
+                    startade = true;
+
                     if(snapshot.data!.docs.isEmpty){
                       return Center(
                         child: Stack(
-                          children: [
-                            startade == false ? const Center(
-                              child: CircularProgressIndicator(),
-                            ): Container(),
-                            Center(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Container(
-                                    padding: const EdgeInsets.all(16),
-                                    child: const Icon(
-                                      Icons.heart_broken,
-                                      size: 100,
+                            children: [
+                              startade == false ? const Center(
+                                child: CircularProgressIndicator(),
+                              ): Container(),
+                              Center(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.center,
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Container(
+                                      padding: const EdgeInsets.all(16),
+                                      child: const Icon(
+                                        Icons.search,
+                                        size: 100,
+                                      ),
                                     ),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.all(16),
-                                    child: const Text('Não há ninguém perto de você ;-; não se preocupe, logo irá aparecer alguém proximo a você!'),
-                                  ),
-                                ],
+                                    Container(
+                                      padding: const EdgeInsets.all(16),
+                                      child: const Text('Guenta aí, estamos procurando alguém proximo a você!'),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ]
+                            ]
                         ),
                       );
                     }
-
-                    startade = true;
-
                     return Stack(
                       children: snapshot.data!.docs.map((documents) {
                         if(!documents['swaped'].contains(UID)){
@@ -784,7 +783,6 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                                                       );
                                                     });
 
-
                                                   }else{
 
                                                   }
@@ -961,7 +959,7 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                                                                               Navigator.of(context).pop();
                                                                               Navigator.push(context,
                                                                                   MaterialPageRoute(builder: (context){
-                                                                                    return chatActivity(IDChat, documents['Nome'], IDAchat);
+                                                                                    return chatActivity(IDChat, documents['Nome'], IDAchat, documents['uid']);
                                                                                   }));
                                                                             });
                                                                           });

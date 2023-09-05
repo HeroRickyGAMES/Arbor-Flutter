@@ -1,3 +1,6 @@
+import 'dart:ffi';
+
+import 'package:arbor/seeProfile/seeProfile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -12,8 +15,9 @@ class chatActivity extends StatefulWidget {
   String id = '';
   String NomeChat2 = '';
   String DocChatIDs = '';
+  String OpositeUID = '';
 
-  chatActivity(this.id, this.NomeChat2, this.DocChatIDs, {super.key});
+  chatActivity(this.id, this.NomeChat2, this.DocChatIDs, this.OpositeUID, {super.key});
 
   @override
   State<chatActivity> createState() => _chatActivityState();
@@ -57,7 +61,30 @@ class _chatActivityState extends State<chatActivity> {
         return Scaffold(
           appBar: AppBar(
             centerTitle: true,
-            title: Text(widget.NomeChat2),
+            title: TextButton(onPressed: () async {
+              print(widget.OpositeUID);
+              var resulte = await FirebaseFirestore.instance
+                  .collection("Usuarios")
+                  .doc(widget.OpositeUID)
+                  .get();
+
+              int idade = resulte['Idade'];
+              String Cidade = resulte['LocalizaçãoDefault'];
+              String descricao = resulte['Detalhes'];
+              String ImageURL = resulte['urlfoto01'];
+
+              Navigator.push(context,
+                  MaterialPageRoute(builder: (context){
+                    return SeeProfile(widget.NomeChat2, idade, Cidade, descricao, ImageURL, true);
+                  }));
+
+              } ,child: Text(
+                widget.NomeChat2,
+              style: const TextStyle(
+                color: Colors.white
+              ),
+            ),
+            ),
           ),
           body: SingleChildScrollView(
             child: Column(
