@@ -479,6 +479,9 @@ class _profileSettingsState extends State<profileSettings> {
                           }
                         }
                       },
+                      style: ElevatedButton.styleFrom(
+                          primary: Colors.green[800]
+                      ),
                       child: const Text('Salvar'),
                     ),
                 ),

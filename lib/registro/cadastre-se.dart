@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:arbor/AdsWidget/AdsWidget.dart';
 import 'package:arbor/swipeMainTela/mainTelaApp.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

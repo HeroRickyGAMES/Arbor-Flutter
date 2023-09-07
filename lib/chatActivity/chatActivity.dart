@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:arbor/seeProfile/seeProfile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -94,7 +92,7 @@ class _chatActivityState extends State<chatActivity> {
                   width: double.infinity,
                   decoration: BoxDecoration(
                     border: Border.all(
-                      color: Colors.black,
+                      color: Colors.white,
                       width: 1.0,
                     ),
                     borderRadius: const BorderRadius.all(Radius.circular(5.0)),
@@ -118,7 +116,7 @@ class _chatActivityState extends State<chatActivity> {
                           return Center(
                             child: Container(
                               padding: const EdgeInsets.all(16),
-                              child: const Text('Você ainda não tem nenhum chat ;-;'),
+                              child: const Text('Você ainda não tem nenhuma conversa com esse usuario ;-;'),
                             ),
                           );
                         }
@@ -200,7 +198,7 @@ class _chatActivityState extends State<chatActivity> {
                                       clipper: ChatBubbleClipper1(type: documents['Nome'] == NomeUser?  BubbleType.sendBubble : BubbleType.receiverBubble),
                                       alignment: documents['Nome'] == NomeUser? Alignment.centerRight: Alignment.centerLeft,
                                       margin: const EdgeInsets.only(top: 20),
-                                      backGroundColor: Colors.blue,
+                                      backGroundColor: documents['Nome'] == NomeUser? Colors.indigoAccent: Colors.green[800],
                                       child: Container(
                                         constraints: BoxConstraints(
                                           maxWidth: MediaQuery.of(context).size.width * 0.7,

@@ -344,14 +344,21 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
           ),
         ),
         bottomNavigationBar: SalomonBottomBar(
+          backgroundColor: Colors.grey[900],
           currentIndex: _currentIndex,
           onTap: (i) {
-            setState(() => _currentIndex = i);
+            setState(() {
+              letContList.clear();
+              _currentIndex = i;
+              if(i == 0){
+                letContList.clear();
+              }
+            });
           },
           items: [
             /// Home
             SalomonBottomBarItem(
-              icon: const Icon(Icons.home),
+              icon: const Icon(Icons.swap_horiz),
               title: Container(),
               selectedColor: Colors.red,
             ),
@@ -374,7 +381,7 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
             SalomonBottomBarItem(
               icon: const Icon(Icons.person),
               title: Container(),
-              selectedColor: Colors.teal,
+              selectedColor: Colors.orange,
             ),
           ],
         ),
@@ -569,7 +576,6 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                     }
 
                     startade = true;
-
                     if(snapshot.data!.docs.isEmpty){
                       return Center(
                         child: Stack(
@@ -698,7 +704,6 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                                             child: ElevatedButton(onPressed: () async {
                                               setState(() {
                                                 makeActions ++;
-                                                print(letContList);
                                               });
 
                                               if(makeActions == 15){
@@ -790,6 +795,9 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                                               });
                                               letContList.clear();
                                             },
+                                                style: ElevatedButton.styleFrom(
+                                                    primary: Colors.pink
+                                                ),
                                                 child: const Icon(Icons.favorite)
                                             ),
                                           ),
@@ -843,6 +851,9 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                                               });
                                               letContList.clear();
                                             },
+                                                style: ElevatedButton.styleFrom(
+                                                    primary: Colors.red[800]
+                                                ),
                                                 child: const Icon(Icons.close)
                                             ),
                                           ),
@@ -981,6 +992,9 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                                                 },
                                               );
                                             },
+                                                style: ElevatedButton.styleFrom(
+                                                    primary: Colors.green[800]
+                                                ),
                                                 child: const Icon(Icons.chat_bubble)
                                             ),
                                           ),
@@ -1149,10 +1163,15 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                           }
                         }else{
                           letContList.add(documents['uid']);
+                          List listaUnica = [];
 
-                          print(letContList);
+                          for (String elemento in letContList) {
+                            if (!listaUnica.contains(elemento)) {
+                              listaUnica.add(elemento);
+                            }
+                          }
 
-                          return letContList.length == snapshot.data?.docs.length ? Center(
+                          return listaUnica.length == snapshot.data?.docs.length ? Center(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,

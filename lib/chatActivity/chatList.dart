@@ -25,7 +25,7 @@ class _ChatListState extends State<ChatList> {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           border: Border.all(
-            color: Colors.black,
+            color: Colors.white,
             width: 1.0,
           ),
           borderRadius: const BorderRadius.all(Radius.circular(5.0)),
@@ -43,6 +43,29 @@ class _ChatListState extends State<ChatList> {
                   child: CircularProgressIndicator(),
                 );
               }
+
+              if(snapshot.data!.docs.isEmpty){
+                return Center(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        child: const Icon(
+                          Icons.mark_chat_unread,
+                          size: 100,
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        child: const Text('Você ainda não tem nenhum chat ativo! Procure usuarios para conversar e interagir na guia de paquera!'),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
               return ListView(
                 children: snapshot.data!.docs.map((documents){
                   mtUser() async {
@@ -56,11 +79,6 @@ class _ChatListState extends State<ChatList> {
                     });
                   }
                   mtUser();
-                  if (!snapshot.hasData) {
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
 
                   if(documents['id1'] == UID){
                     return InkWell(
@@ -81,7 +99,7 @@ class _ChatListState extends State<ChatList> {
                       child: Container(
                         decoration: BoxDecoration(
                           border: Border.all(
-                            color: Colors.black,
+                            color: Colors.white,
                             width: 1.0,
                           ),
                           borderRadius: const BorderRadius.all(Radius.circular(5.0)),
@@ -115,15 +133,11 @@ class _ChatListState extends State<ChatList> {
                                 ),
                                 Expanded(
                                   flex: 5,
-                                  child: Container(
-                                      child: Text(documents['LastMensage'])
-                                  ),
+                                  child: Text(documents['LastMensage']),
                                 ),
                                 Expanded(
                                   flex: 2,
-                                  child: Container(
-                                      child: Text("${documents['Data']} - ${documents['Hora']}")
-                                  ),
+                                  child: Text("${documents['Data']} - ${documents['Hora']}"),
                                 ),
                               ],
                             ),
@@ -151,7 +165,7 @@ class _ChatListState extends State<ChatList> {
                         child: Container(
                           decoration: BoxDecoration(
                             border: Border.all(
-                              color: Colors.black,
+                              color: Colors.white,
                               width: 1.0,
                             ),
                             borderRadius: const BorderRadius.all(Radius.circular(5.0)),
