@@ -250,7 +250,7 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
                     child: ElevatedButton(onPressed: (){
                       sejaPremium(context);
                     },
-                        child: const Text('Se torne premium')
+                        child: const Text('Se torne Premium')
                     ),
                   ),
                   Container(

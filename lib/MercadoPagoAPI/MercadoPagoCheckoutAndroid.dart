@@ -36,6 +36,7 @@ class _ChekoutPaymentState extends State<ChekoutPayment> {
           'idCompra': widget.idCompra,
           'Status': result.result,
           'Origin': 'Mobile (Android)',
+          'tipo': '${result.paymentMethodId}',
         }).whenComplete(() {
           FirebaseFirestore.instance.collection('Usuarios').doc(widget.id).set({
             'AssinaturaTime': '${DateTime.now().month}/${DateTime.now().day}/${DateTime.now().year}'
@@ -62,6 +63,7 @@ class _ChekoutPaymentState extends State<ChekoutPayment> {
             'idCompra': widget.idCompra,
             'Status': result.result,
             'Origin': 'Mobile (Android)',
+            'tipo': 'Desconhecido',
           }).whenComplete(() {
             Fluttertoast.showToast(
                 msg: "Ocorreu algum erro no pagamento e ele foi cancelado, tente trocar de cartão ou tentar novamente",
