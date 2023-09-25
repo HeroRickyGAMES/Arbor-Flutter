@@ -113,175 +113,77 @@ sejaPremium(context){
                     ),
                       TextButton(onPressed: () async {
                         Navigator.of(context).pop();
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return StatefulBuilder(builder: (BuildContext context, StateSetter setState){
-                              return AlertDialog(
-                                title: const Text('Temos pagamentos em PIX e Cartão.'),
-                                actions: [
-                                  Center(
-                                    child: Column(
-                                      children: [
-                                        TextButton(onPressed: () async {
-                                          String QRPix = await pixFlutter('${valorRs}');
 
-                                          String plataforma = 'Android (Mobile)';
-                                          var uuid = const Uuid();
 
-                                          idCompra = "${DateTime.now().toString()}${uuid.v4()}";
+                        Fluttertoast.showToast(
+                            msg: "Aguarde!",
+                            toastLength: Toast.LENGTH_SHORT,
+                            gravity: ToastGravity.CENTER,
+                            timeInSecForIosWeb: 1,
+                            backgroundColor: Colors.red,
+                            textColor: Colors.white,
+                            fontSize: 16.0
+                        );
+                        var server = await FirebaseFirestore.instance
+                            .collection("Server")
+                            .doc("ServerValues")
+                            .get();
+                        String AssToken = server.get('Access Token');
+                        String PubKey = server.get('ChavePublica');
 
-                                          FirebaseFirestore.instance.collection('Payments').doc(idCompra).set({
-                                            'UIDCompra': UID,
-                                            'Status': 'PIX Gerado',
-                                            'Origin': plataforma,
-                                            'tipo': 'PIX',
-                                            'Codigo pix': QRPix
-                                          });
+                        final access_token = AssToken;
+                        const url = 'https://api.mercadopago.com/checkout/preferences';
 
-                                          bool ispayed = false;
-                                          Navigator.of(context).pop();
-
-                                          //Fazer uma função que irá verificar se o pix já foi pago, se sim, ele retornará true e fechará a janela de QR Code
-                                          aguardandoPagamento() async {
-
-                                          }
-                                          aguardandoPagamento();
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return StatefulBuilder(builder: (BuildContext context, StateSetter setState){
-                                                return AlertDialog(
-                                                  title: const Text('Agora é só escanear o código QR!'),
-                                                  actions: [
-                                                    Center(
-                                                      child: Column(
-                                                        children: [
-                                                          SizedBox(
-                                                            height: 200,
-                                                            width: 200,
-                                                            child: QrImageView(
-                                                              data: "$QRPix",
-                                                              version: QrVersions.auto,
-                                                              size: 200.0,
-                                                              backgroundColor: Colors.white,
-                                                            ),
-                                                          ),
-                                                          const Text('Você também pode copiar a chave PIX copia e cola!'),
-                                                          ispayed == false ? const Text('Aguardando pagamento...') : Container(),
-                                                          ispayed == false ? const Center(child: CircularProgressIndicator(),): Container(),
-                                                          TextButton(onPressed: (){
-                                                            FlutterClipboard.copy("$QRPix").whenComplete((){
-                                                              Fluttertoast.showToast(
-                                                                  msg: "Pix copiado com sucesso!",
-                                                                  toastLength: Toast.LENGTH_SHORT,
-                                                                  gravity: ToastGravity.CENTER,
-                                                                  timeInSecForIosWeb: 1,
-                                                                  backgroundColor: Colors.red,
-                                                                  textColor: Colors.white,
-                                                                  fontSize: 16.0
-                                                              );
-                                                            });
-                                                          }, child: const Text('Copiar chave pix copia e cola')
-                                                          ),
-                                                          TextButton(onPressed: (){
-                                                            Navigator.of(context).pop();
-                                                          }, child: const Text('Fechar')
-                                                          )
-                                                        ],
-                                                      ),
-                                                    )
-                                                  ],
-                                                );
-                                              },);
-                                            },
-                                          );
-
-                                        }, child: const Text('PIX')
-                                        ),
-                                        TextButton(onPressed: () async {
-                                          Fluttertoast.showToast(
-                                              msg: "Aguarde!",
-                                              toastLength: Toast.LENGTH_SHORT,
-                                              gravity: ToastGravity.CENTER,
-                                              timeInSecForIosWeb: 1,
-                                              backgroundColor: Colors.red,
-                                              textColor: Colors.white,
-                                              fontSize: 16.0
-                                          );
-                                          var server = await FirebaseFirestore.instance
-                                              .collection("Server")
-                                              .doc("ServerValues")
-                                              .get();
-                                          String AssToken = server.get('Access Token');
-                                          String PubKey = server.get('ChavePublica');
-
-                                          final access_token = AssToken;
-                                          final url = 'https://api.mercadopago.com/checkout/preferences';
-
-                                          final body = jsonEncode({
-                                            "items": [
-                                              {
-                                                "title": "Premium por um mês",
-                                                "description": "Usando recursos premium por um mes no app Arbor!",
-                                                "quantity": 1,
-                                                "currency_id": "ARS",
-                                                "unit_price": valorRs
-                                              }
-                                            ],
-                                            "back_urls": {
-                                              "success": "https://herorickygames.github.io/Projeto-Pede-Facil-Entregadores/",
-                                              "failure": "https://www.google.com"
-                                            },
-                                            "payer": {
-                                              "email": "payer@email.com"
-                                            }
-                                          });
-
-                                          final response = await http.post(
-                                            Uri.parse('$url?access_token=$access_token'),
-                                            headers: {
-                                              'Content-Type': 'application/json',
-                                            },
-                                            body: body,
-                                          );
-
-                                          if(response.statusCode == 200 || response.statusCode == 201){
-                                            final preferenceId = jsonDecode(response.body)['id'];
-
-                                            var UIDUser = FirebaseAuth.instance.currentUser?.uid;
-
-                                            Navigator.of(context).pop();
-
-                                            Navigator.push(context,
-                                                MaterialPageRoute(builder: (context){
-                                                  return ChekoutPayment(preferenceId, PubKey, UIDUser!);
-                                                }));
-
-                                          }else{
-                                            Fluttertoast.showToast(
-                                                msg: "Houve um errro de cominucação com o servidor, por favor contate-nos pela PlayStore!",
-                                                toastLength: Toast.LENGTH_SHORT,
-                                                gravity: ToastGravity.CENTER,
-                                                timeInSecForIosWeb: 1,
-                                                backgroundColor: Colors.red,
-                                                textColor: Colors.white,
-                                                fontSize: 16.0
-                                            );
-                                          }
-                                        }, child: const Text('Cartão')
-                                        ),
-                                      ],
-                                    ),
-                                  )
-                                ],
-                              );
-                            },);
+                        final body = jsonEncode({
+                          "items": [
+                            {
+                              "title": "Premium por um mês",
+                              "description": "Usando recursos premium por um mes no app Arbor!",
+                              "quantity": 1,
+                              "currency_id": "ARS",
+                              "unit_price": valorRs
+                            }
+                          ],
+                          "back_urls": {
+                            "success": "https://herorickygames.github.io/Projeto-Pede-Facil-Entregadores/",
+                            "failure": "https://www.google.com"
                           },
+                          "payer": {
+                            "email": "payer@email.com"
+                          }
+                        });
+
+                        final response = await http.post(
+                          Uri.parse('$url?access_token=$access_token'),
+                          headers: {
+                            'Content-Type': 'application/json',
+                          },
+                          body: body,
                         );
 
+                        if(response.statusCode == 200 || response.statusCode == 201){
+                          final preferenceId = jsonDecode(response.body)['id'];
 
+                          var UIDUser = FirebaseAuth.instance.currentUser?.uid;
 
+                          Navigator.of(context).pop();
+
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context){
+                                return ChekoutPayment(preferenceId, PubKey, UIDUser!);
+                              }));
+
+                        }else{
+                          Fluttertoast.showToast(
+                              msg: "Houve um errro de cominucação com o servidor, por favor contate-nos pela PlayStore!",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.red,
+                              textColor: Colors.white,
+                              fontSize: 16.0
+                          );
+                        }
 
                       },
                         child: const Text(
