@@ -11,7 +11,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 intermeterNotifications() async {
   final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   final SharedPreferences prefs = await _prefs;
-
   String? negado = prefs.getString('JaPegouDvTk');
 
   await Firebase.initializeApp(
@@ -69,10 +68,14 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     if(message.data['idSender'] == UID){
 
     }else{
+      List mensageList = [];
+
       if(message.data['id1'] == UID || message.data['id1'] == UID){
+        mensageList.add(message.data['body']);
+
         NotificationApi.showNotification(
             title: '${message.data['title']}',
-            body: '${message.data['body']}',
+            body: '${mensageList.toString()}',
             payload: 'hrg.ntf'
         );
 
