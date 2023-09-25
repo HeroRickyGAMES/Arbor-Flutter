@@ -36,7 +36,10 @@ bool isSameSexAndOposite = false;
 bool isPremium = false;
 bool _notificationsEnabled = false;
 List letContList = [];
-
+List listaUnica = [];
+List listaNome = [];
+bool isShowing = false;
+List listaUnicaLocal = [];
 
 main(){
   WidgetsFlutterBinding.ensureInitialized();
@@ -241,104 +244,14 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
                   height: constrains.maxHeight - 275,
                   child: profileSettings(isPremium)
               ),
-              isPremium == false ? Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(5),
-                    child: ElevatedButton(onPressed: (){
-                      sejaPremium(context);
-                    },
-                        child: const Text('Se torne Premium')
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(5),
-                    child: ElevatedButton(onPressed: (){
-                      showDialog(
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: const Center(
-                                child: Text(
-                                  'Seja Premium temporario!',
-                                  style: TextStyle(
-                                      fontSize: 24,
-                                      fontWeight: FontWeight.bold
-                                  ),
-                                )
-                            ),
-                            actions: [
-                              Container(
-                                padding: const EdgeInsets.all(16),
-                                child: Center(
-                                  child: Column(
-                                    children: [
-                                      const Text(
-                                        'Com o premium temporario você tem todos os recursos premium em uma unica sessão sem pagar nada!',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold
-                                        ),
-                                      ),
-                                      const Text(
-                                        'Curtir e conversar pessoas que já te curtiram sem restrições',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold
-                                        ),
-                                      ),
-                                      const Text('Conheça pessoas do mundo todo!',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold
-                                        ),
-                                      ),
-                                      const Text('Mais opções!',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold
-                                        ),
-                                      ),
-                                      TextButton(onPressed: () async {
-                                        Navigator.of(context).pop();
-                                        interAdReward(isPremium);
-                                        Fluttertoast.showToast(
-                                            msg: "Aguarde um momento enquanto carregamos o anuncio...",
-                                            toastLength: Toast.LENGTH_SHORT,
-                                            gravity: ToastGravity.CENTER,
-                                            timeInSecForIosWeb: 1,
-                                            backgroundColor: Colors.red,
-                                            textColor: Colors.white,
-                                            fontSize: 16.0
-                                        );
-                                      }, child: const Text(
-                                        'Seja premium temporario!',
-                                        style: TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold
-                                        ),
-                                      )
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              )
-                            ],
-                          );
-                        },
-                      );
-                    },
-                        child: const Text('Obtenha o premium temporario')
-                    ),
-                  ),
-                ],
-              ): Container(),
+              isPremium == false ? Container(
+            padding: const EdgeInsets.all(5),
+              child: ElevatedButton(onPressed: (){
+                sejaPremium(context);
+              },
+              child: const Text('Se torne Premium')
+      ),
+      ): Container(),
               AdBannerLayout(isPremium),
             ],
           ),
@@ -610,6 +523,15 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                       children: snapshot.data!.docs.map((documents) {
                         if(!documents['swaped'].contains(UID)){
                           if(documents['Idade'] >= userInfos['idadeProcuraMin'] && documents['Idade'] <= userInfos['idadeProcura']){
+                            listaNome.add(documents['Nome']);
+
+                            for (String elemento in listaNome) {
+                              if (!listaUnicaLocal.contains(elemento)) {
+                                listaUnicaLocal.add(elemento);
+                              }
+                            }
+
+                            isShowing = true;
                             return SwipeableCardsSection(
                               cardController: _cardController,
                               context: context,
@@ -793,6 +715,9 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                                                   }
                                                 });
                                               });
+                                              if(listaUnicaLocal.length == 1){
+                                                isShowing = false;
+                                              }
                                               letContList.clear();
                                             },
                                                 style: ElevatedButton.styleFrom(
@@ -849,6 +774,9 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                                                   'Hora': '${DateTime.now().hour}:${DateTime.now().minute}',
                                                 });
                                               });
+                                              if(listaUnicaLocal.length == 1){
+                                                isShowing = false;
+                                              }
                                               letContList.clear();
                                             },
                                                 style: ElevatedButton.styleFrom(
@@ -976,6 +904,9 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                                                                           });
                                                                         });
                                                                       });
+                                                                      if(listaUnicaLocal.length == 1){
+                                                                        isShowing = false;
+                                                                      }
                                                                       letContList.clear();
                                                                     }
                                                                   }, child: const Text('Enviar')
@@ -1108,6 +1039,9 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                                       }
                                     });
                                   });
+                                  if(listaUnicaLocal.length == 1){
+                                    isShowing = false;
+                                  }
                                   letContList.clear();
                                 }
                                 //Desliked
@@ -1152,6 +1086,9 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                                       'Hora': '${DateTime.now().hour}:${DateTime.now().minute}',
                                     });
                                   });
+                                  if(listaUnicaLocal.length == 1){
+                                    isShowing = false;
+                                  }
                                   letContList.clear();
                                 }
                               },
@@ -1162,16 +1099,8 @@ class _SwapWidgetsState extends State<SwapWidgets> {
                             return Positioned(child: Container());
                           }
                         }else{
-                          letContList.add(documents['uid']);
-                          List listaUnica = [];
 
-                          for (String elemento in letContList) {
-                            if (!listaUnica.contains(elemento)) {
-                              listaUnica.add(elemento);
-                            }
-                          }
-
-                          return listaUnica.length == snapshot.data?.docs.length ? Center(
+                          return isShowing == false ? Center(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.center,
                               mainAxisAlignment: MainAxisAlignment.center,

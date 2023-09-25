@@ -87,7 +87,13 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     }else{
 
       if(message.data['id1'] == UID || message.data['id1'] == UID){
+        if(!titleList.contains(message.data['title'])){
+          mensageList.clear();
+          titleList.clear();
+        }
+
         mensageList.add(message.data['body']);
+        titleList.add(message.data['title']);
 
         if(mensageList.length == 3){
           mensageList.clear();
