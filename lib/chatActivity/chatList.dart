@@ -125,8 +125,8 @@ class _ChatListState extends State<ChatList> {
                                   child: Container(
                                     padding: const EdgeInsets.all(16),
                                     child: Image.network(
-                                      URL == documents['URLUser1']?  documents['URLUser2']:
-                                      documents['URLUser1'],
+                                      URL == documents['URLUser2']?  documents['URLUser1']:
+                                      documents['URLUser2'],
                                       scale: 15,
                                     ),
                                   ),

@@ -2,14 +2,15 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 //Programado por HeroRickyGames
 
+
 class NotificationApi{
   static final _notifications = FlutterLocalNotificationsPlugin();
   static Future _notificationsDetails() async{
     return const NotificationDetails(
       android: AndroidNotificationDetails(
         'channel id',
-        'channel Name',
-        channelDescription:"Channel Description",
+        'Arbor Notificações',
+        channelDescription:"Toda a parte de notificações do aplicativo Arbor",
         importance: Importance.max,
         icon: '@mipmap/ic_launcher',
         playSound: true,
@@ -24,6 +25,6 @@ class NotificationApi{
     String? body,
     String? payload,
 
-  }) async  =>
-      _notifications.show(id, title, body, await _notificationsDetails());
+  }) async  => _notifications.show(id, title, body, await _notificationsDetails());
+
 }
