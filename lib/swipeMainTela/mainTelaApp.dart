@@ -71,9 +71,15 @@ class _MainTelaRoletaState extends State<MainTelaRoleta> {
           interAd(isPremium);
         }
       }else{
-        int totaymenostrinta = int.parse('${DateTime.now().month}${DateTime.now().day}${DateTime.now().year}') - 01000000;
+        int totaymenostrinta = int.parse('${DateTime
+            .now()
+            .month}${DateTime
+            .now()
+            .day}${DateTime
+            .now()
+            .year}') - 0100000;
 
-        if(totaymenostrinta ==  int.parse("${userInfos['AssinaturaTime'].replaceAll('/', '')}")){
+        if (totaymenostrinta < int.parse("${userInfos['AssinaturaTime'].replaceAll('/', '')}")) {
           isPremium = true;
         }else{
           if(userInfos['Debug'] == true){
@@ -344,9 +350,9 @@ class _SwapWidgetsState extends State<SwapWidgets> {
               .now()
               .day}${DateTime
               .now()
-              .year}') - 01000000;
+              .year}') - 0100000;
 
-          if (totaymenostrinta == int.parse("${userInfos['AssinaturaTime'].replaceAll('/', '')}")) {
+          if (totaymenostrinta < int.parse("${userInfos['AssinaturaTime'].replaceAll('/', '')}")) {
             onlyMyLocate = userInfos['exibirApenasEmMinhaLocalização'];
           } else {
             if (userInfos['Debug'] == true) {

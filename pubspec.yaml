@@ -60,7 +60,6 @@ dependencies:
   translator_plus: ^1.0.1
   fluid_kit: ^3.0.0
   clipboard: ^0.1.3
-  pix_flutter: ^2.2.0
   qr_flutter: ^4.1.0
   random_uuid_string: ^0.0.2
 

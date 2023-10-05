@@ -129,14 +129,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.8"
-  dio:
-    dependency: transitive
-    description:
-      name: dio
-      sha256: ce75a1b40947fea0a0e16ce73337122a86762e38b982e1ccb909daa3b9bc4197
-      url: "https://pub.dev"
-    source: hosted
-    version: "5.3.2"
   fake_async:
     dependency: transitive
     description:
@@ -688,14 +680,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.4.0"
-  pix_flutter:
-    dependency: "direct main"
-    description:
-      name: pix_flutter
-      sha256: "4fa3d08fb53f7edc0b7b23914540df22b2ab5d3fce79260d2b4b38185d4e0100"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.0"
   platform:
     dependency: transitive
     description:
