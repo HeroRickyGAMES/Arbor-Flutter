@@ -59,4 +59,12 @@ class DefaultFirebaseOptions {
     projectId: 'lovers-ai-to-kanjo',
     storageBucket: 'lovers-ai-to-kanjo.appspot.com',
   );
+
+  static const FirebaseOptions windows = FirebaseOptions(
+    apiKey: 'AIzaSyDkgHI9A1qfJcqQjfx0dov1GKaQOyc8Ibo',
+    appId: '1:475003588315:android:e35b245fa6e7ff92e046fe',
+    messagingSenderId: '475003588315',
+    projectId: 'lovers-ai-to-kanjo',
+    storageBucket: 'lovers-ai-to-kanjo.appspot.com',
+  );
 }

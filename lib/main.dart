@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:arbor/firebase_options.dart';
 import 'package:arbor/loginScreen/loginScreen.dart';
 import 'package:arbor/swipeMainTela/mainTelaApp.dart';
@@ -41,9 +43,16 @@ class MainApp extends StatefulWidget {
 class _MainAppState extends State<MainApp> {
 
   checkIsLogin() async {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+
+    if(Platform.isWindows){
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.windows,
+      );
+    }else{
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    }
     FirebaseAuth.instance.idTokenChanges().listen((User? user) async {
 
       if(user == null){
