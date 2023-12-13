@@ -226,11 +226,17 @@ assinaturaPIX(context, double Valor, int maisDate, int days){
                       String idPix = '';
                       String QRCode = '';
 
+                      var server = await FirebaseFirestore.instance
+                          .collection("Server")
+                          .doc("ServerValues")
+                          .get();
+                      String AssToken = server.get('Access Token');
+
                       final Map<String, String> headers = {
                         'accept': 'application/json',
                         'content-type': 'application/json',
                         'Authorization':
-                        'Bearer APP_USR-1043806088316304-112116-22728519f1efab60ee52f29f3f3f3487-306741183',
+                        'Bearer $AssToken',
                       };
 
                       final Map<String, dynamic> data = {
@@ -281,7 +287,7 @@ assinaturaPIX(context, double Valor, int maisDate, int days){
                               final String urll = 'https://api.mercadopago.com/v1/payments/$idPixx';
                               final Map<String, String> headers = {
                                 'Authorization':
-                                'Bearer APP_USR-1043806088316304-112116-22728519f1efab60ee52f29f3f3f3487-306741183',
+                                'Bearer $AssToken',
                               };
 
                               final response = await http.get(
